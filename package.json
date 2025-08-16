@@ -1,0 +1,54 @@
+{
+  "name": "digital-e-gram-panchayat",
+  "version": "1.0.0",
+  "description": "A comprehensive web application for digitizing Gram Panchayat services, enabling citizens to apply for various government services online and track their application status.",
+  "main": "index.html",
+  "scripts": {
+    "start": "http-server -p 8000 -c-1",
+    "dev": "http-server -p 8000 -c-1 -o",
+    "build": "echo 'No build process required for static site'",
+    "deploy": "firebase deploy",
+    "test": "echo 'No tests specified'",
+    "lint": "echo 'No linting configured'",
+    "format": "prettier --write .",
+    "serve": "python -m http.server 8000",
+    "serve-php": "php -S localhost:8000"
+  },
+  "keywords": [
+    "gram-panchayat",
+    "government-services",
+    "digital-india",
+    "e-governance",
+    "firebase",
+    "javascript",
+    "html5",
+    "css3",
+    "responsive-design"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/digital-e-gram-panchayat.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yourusername/digital-e-gram-panchayat/issues"
+  },
+  "homepage": "https://github.com/yourusername/digital-e-gram-panchayat#readme",
+  "devDependencies": {
+    "http-server": "^14.1.1",
+    "prettier": "^2.8.8"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ],
+  "dependencies": {},
+  "optionalDependencies": {
+    "firebase-tools": "^12.0.0"
+  }
+} 

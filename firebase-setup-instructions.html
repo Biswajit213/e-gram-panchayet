@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firebase Setup Instructions - Digital E Gram Panchayat</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #4CAF50;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        h2 {
+            color: #333;
+            border-bottom: 2px solid #4CAF50;
+            padding-bottom: 10px;
+        }
+        .step {
+            background: #f9f9f9;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 4px solid #4CAF50;
+            border-radius: 5px;
+        }
+        .step h3 {
+            margin-top: 0;
+            color: #4CAF50;
+        }
+        code {
+            background: #e8e8e8;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+        .code-block {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin: 10px 0;
+        }
+        .warning {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        ul {
+            padding-left: 20px;
+        }
+        li {
+            margin: 10px 0;
+        }
+        a {
+            color: #4CAF50;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔥 Firebase Setup Instructions</h1>
+        <p>Your Digital E Gram Panchayat application is currently running in demo mode because Firebase is not configured. Follow these steps to enable user registration and data storage.</p>
+
+        <div class="warning">
+            <strong>⚠️ Current Status:</strong> Firebase is not configured. User registration and login will not work until you complete the setup below.
+        </div>
+
+        <h2>📋 Prerequisites</h2>
+        <ul>
+            <li>A Google account</li>
+            <li>Basic understanding of web development</li>
+            <li>Access to your project files</li>
+        </ul>
+
+        <div class="step">
+            <h3>Step 1: Create Firebase Project</h3>
+            <ol>
+                <li>Go to <a href="https://console.firebase.google.com/" target="_blank">Firebase Console</a></li>
+                <li>Click "Create a project" or "Add project"</li>
+                <li>Enter project name: <code>digital-gram-panchayat</code> (or your preferred name)</li>
+                <li>Choose whether to enable Google Analytics (optional)</li>
+                <li>Click "Create project"</li>
+            </ol>
+        </div>
+
+        <div class="step">
+            <h3>Step 2: Enable Authentication</h3>
+            <ol>
+                <li>In your Firebase project, click "Authentication" in the left sidebar</li>
+                <li>Click "Get started"</li>
+                <li>Go to "Sign-in method" tab</li>
+                <li>Enable "Email/Password" provider</li>
+                <li>Click "Save"</li>
+            </ol>
+        </div>
+
+        <div class="step">
+            <h3>Step 3: Enable Firestore Database</h3>
+            <ol>
+                <li>Click "Firestore Database" in the left sidebar</li>
+                <li>Click "Create database"</li>
+                <li>Choose "Start in test mode" (for development)</li>
+                <li>Select a location for your database</li>
+                <li>Click "Done"</li>
+            </ol>
+        </div>
+
+        <div class="step">
+            <h3>Step 4: Get Firebase Configuration</h3>
+            <ol>
+                <li>Click the gear icon ⚙️ next to "Project Overview"</li>
+                <li>Select "Project settings"</li>
+                <li>Scroll down to "Your apps" section</li>
+                <li>Click the web icon <code>&lt;/&gt;</code> to add a web app</li>
+                <li>Enter app nickname: <code>digital-gram-panchayat-web</code></li>
+                <li>Click "Register app"</li>
+                <li>Copy the Firebase configuration object</li>
+            </ol>
+        </div>
+
+        <div class="step">
+            <h3>Step 5: Update Your Project</h3>
+            <p>Replace the configuration in <code>js/firebase-config.js</code> with your actual Firebase config:</p>
+            <div class="code-block">
+const firebaseConfig = {
+    apiKey: "your-actual-api-key",
+    authDomain: "your-project.firebaseapp.com",
+    projectId: "your-project-id",
+    storageBucket: "your-project.appspot.com",
+    messagingSenderId: "your-sender-id",
+    appId: "your-app-id"
+};
+            </div>
+        </div>
+
+        <div class="step">
+            <h3>Step 6: Set Firestore Security Rules (Optional)</h3>
+            <p>For production, update your Firestore rules in the Firebase Console:</p>
+            <div class="code-block">
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Users can read/write their own data
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+    
+    // Services are readable by all authenticated users
+    match /services/{document} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && 
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+    
+    // Applications are readable/writable by owner and staff/admin
+    match /applications/{document} {
+      allow read, write: if request.auth != null && 
+        (resource.data.userId == request.auth.uid || 
+         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['staff', 'admin']);
+    }
+  }
+}
+            </div>
+        </div>
+
+        <div class="success">
+            <strong>✅ After Setup:</strong> Your application will support:
+            <ul>
+                <li>User registration and login</li>
+                <li>Data storage in Firestore</li>
+                <li>Real-time updates</li>
+                <li>Secure authentication</li>
+            </ul>
+        </div>
+
+        <h2>🔧 Testing Your Setup</h2>
+        <ol>
+            <li>Save your changes to <code>js/firebase-config.js</code></li>
+            <li>Refresh your application</li>
+            <li>Try registering a new user</li>
+            <li>Check the Firebase Console to see if the user was created</li>
+        </ol>
+
+        <div class="warning">
+            <strong>💡 Need Help?</strong> 
+            <ul>
+                <li>Check the browser console for error messages</li>
+                <li>Ensure your Firebase project has Authentication and Firestore enabled</li>
+                <li>Verify your configuration values are correct</li>
+                <li>Make sure you're using the web configuration (not iOS/Android)</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

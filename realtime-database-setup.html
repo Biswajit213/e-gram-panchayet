@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Realtime Database Setup - Digital E Gram Panchayat</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #4CAF50;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        h2 {
+            color: #333;
+            border-bottom: 2px solid #4CAF50;
+            padding-bottom: 10px;
+        }
+        .step {
+            background: #f9f9f9;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 4px solid #4CAF50;
+            border-radius: 5px;
+        }
+        .step h3 {
+            margin-top: 0;
+            color: #4CAF50;
+        }
+        code {
+            background: #e8e8e8;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+        .code-block {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin: 10px 0;
+        }
+        .warning {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        ul {
+            padding-left: 20px;
+        }
+        li {
+            margin: 10px 0;
+        }
+        a {
+            color: #4CAF50;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔥 Realtime Database Setup</h1>
+        <p>Your Digital E Gram Panchayat application is now configured to use Firebase Realtime Database for storing user registration data.</p>
+
+        <div class="success">
+            <strong>✅ Code Updated:</strong> Your application now saves registration data to Firebase Realtime Database instead of Firestore.
+        </div>
+
+        <h2>📋 Setup Realtime Database</h2>
+
+        <div class="step">
+            <h3>Step 1: Enable Realtime Database</h3>
+            <ol>
+                <li>Go to <a href="https://console.firebase.google.com/" target="_blank">Firebase Console</a></li>
+                <li>Select your project: <strong>e-panchayet</strong></li>
+                <li>Click <strong>"Realtime Database"</strong> in the left sidebar</li>
+                <li>Click <strong>"Create Database"</strong></li>
+                <li>Choose location (usually same as your Firestore)</li>
+                <li>Select <strong>"Start in test mode"</strong> for now</li>
+                <li>Click <strong>"Enable"</strong></li>
+            </ol>
+        </div>
+
+        <div class="step">
+            <h3>Step 2: Set Database Rules</h3>
+            <p>Go to <strong>Realtime Database → Rules</strong> and replace with:</p>
+            <div class="code-block">
+{
+  "rules": {
+    "users": {
+      "$uid": {
+        ".read": "$uid === auth.uid || root.child('users').child(auth.uid).child('role').val() === 'admin'",
+        ".write": "$uid === auth.uid || root.child('users').child(auth.uid).child('role').val() === 'admin'"
+      }
+    },
+    "services": {
+      ".read": "auth != null",
+      ".write": "root.child('users').child(auth.uid).child('role').val() === 'admin'"
+    },
+    "applications": {
+      "$appId": {
+        ".read": "auth != null && (data.child('userId').val() === auth.uid || root.child('users').child(auth.uid).child('role').val() === 'admin' || root.child('users').child(auth.uid).child('role').val() === 'staff')",
+        ".write": "auth != null && (data.child('userId').val() === auth.uid || root.child('users').child(auth.uid).child('role').val() === 'admin' || root.child('users').child(auth.uid).child('role').val() === 'staff')"
+      }
+    }
+  }
+}
+            </div>
+            <p>Click <strong>"Publish"</strong> to save the rules.</p>
+        </div>
+
+        <div class="step">
+            <h3>Step 3: Get Database URL</h3>
+            <p>Your database URL should be:</p>
+            <div class="code-block">
+https://e-panchayet-default-rtdb.firebaseio.com/
+            </div>
+            <p>This is already configured in your <code>js/firebase-config.js</code> file.</p>
+        </div>
+
+        <h2>🧪 Test Your Setup</h2>
+
+        <div class="step">
+            <h3>Method 1: Use Test Button</h3>
+            <ol>
+                <li>Go back to your main application</li>
+                <li>Click the green <strong>"🧪 Test Register"</strong> button</li>
+                <li>Check Firebase Console → Realtime Database → Data</li>
+                <li>You should see a <code>users</code> node with test data</li>
+            </ol>
+        </div>
+
+        <div class="step">
+            <h3>Method 2: Manual Registration</h3>
+            <ol>
+                <li>Click <strong>"Register"</strong> on your application</li>
+                <li>Fill out the registration form</li>
+                <li>Submit the form</li>
+                <li>Check Firebase Console → Realtime Database → Data</li>
+                <li>Look for your user data under <code>users → [user-id]</code></li>
+            </ol>
+        </div>
+
+        <h2>📊 Data Structure</h2>
+        <p>Your user data will be stored in this structure:</p>
+        <div class="code-block">
+{
+  "users": {
+    "user-uid-123": {
+      "name": "John Doe",
+      "email": "john@example.com",
+      "phone": "1234567890",
+      "address": "123 Main St",
+      "role": "user",
+      "createdAt": 1640995200000,
+      "updatedAt": 1640995200000
+    }
+  }
+}
+        </div>
+
+        <h2>🔍 Troubleshooting</h2>
+
+        <div class="warning">
+            <strong>Common Issues:</strong>
+            <ul>
+                <li><strong>Permission denied:</strong> Check if Realtime Database rules are set correctly</li>
+                <li><strong>Database not found:</strong> Ensure Realtime Database is enabled in Firebase Console</li>
+                <li><strong>Invalid URL:</strong> Verify the databaseURL in firebase-config.js</li>
+                <li><strong>Auth required:</strong> Make sure user is authenticated before writing data</li>
+            </ul>
+        </div>
+
+        <div class="success">
+            <strong>✅ Success Indicators:</strong>
+            <ul>
+                <li>Registration form submits without errors</li>
+                <li>User appears in Firebase Authentication</li>
+                <li>User data appears in Realtime Database → users</li>
+                <li>Console shows "✅ User data saved to Realtime Database"</li>
+            </ul>
+        </div>
+
+        <h2>🎯 Next Steps</h2>
+        <ol>
+            <li><strong>Enable Realtime Database</strong> in Firebase Console</li>
+            <li><strong>Set database rules</strong> for security</li>
+            <li><strong>Test registration</strong> using the test button</li>
+            <li><strong>Verify data</strong> appears in Realtime Database</li>
+            <li><strong>Update other parts</strong> of your app to use Realtime Database</li>
+        </ol>
+
+        <div class="warning">
+            <strong>💡 Note:</strong> Your application now supports both Firestore and Realtime Database. Registration data will be saved to Realtime Database primarily, with optional backup to Firestore for compatibility.
+        </div>
+    </div>
+</body>
+</html>

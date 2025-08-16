@@ -1,0 +1,1310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital E Gram Panchayat</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/auth.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <style>
+      /* Modern scrollbar for register modal */
+      #register-modal .modal-content {
+        scrollbar-width: thin;
+        scrollbar-color: #4CAF50 #e0e0e0;
+      }
+      #register-modal .modal-content::-webkit-scrollbar {
+        width: 8px;
+        border-radius: 8px;
+        background: #e0e0e0;
+      }
+      #register-modal .modal-content::-webkit-scrollbar-thumb {
+        background: linear-gradient(135deg, #4CAF50 60%, #388e3c 100%);
+        border-radius: 8px;
+        min-height: 40px;
+      }
+      #register-modal .modal-content::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(135deg, #388e3c 60%, #4CAF50 100%);
+      }
+
+      /* Ensure proper initial state */
+      #main-content {
+        display: block !important;
+      }
+
+      .dashboard {
+        display: none !important;
+      }
+
+      .modal {
+        display: none !important;
+      }
+
+      .modal[style*="display: block"] {
+        display: block !important;
+      }
+    </style>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="loading-screen">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <h2>Digital E Gram Panchayat</h2>
+            <p>Loading...</p>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="fas fa-landmark"></i>
+                <span>Digital E Gram Panchayat</span>
+            </div>
+            <div class="nav-menu" id="nav-menu">
+                <a href="#home" class="nav-link">Home</a>
+                <a href="#services" class="nav-link">Services</a>
+                <a href="#about" class="nav-link">About</a>
+                <a href="#contact" class="nav-link">Contact</a>
+                <div class="auth-buttons" id="auth-buttons">
+                    <button class="btn btn-primary" onclick="showLoginModal()">Login</button>
+                    <button class="btn btn-secondary" onclick="showRegisterModal(); console.log('Register button clicked');">Register</button>
+                </div>
+            </div>
+            <div class="nav-toggle" id="nav-toggle">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main id="main-content">
+        <!-- Hero Section -->
+        <section id="home" class="hero-section">
+            <div class="hero-content">
+                <h1>Welcome to Digital E Gram Panchayat</h1>
+                <p>Empowering citizens with digital access to government services</p>
+                <div class="hero-buttons">
+                    <button class="btn btn-primary btn-large" onclick="showRegisterModal(); console.log('Hero register button clicked');">
+                        <i class="fas fa-user-plus"></i> Get Started
+                    </button>
+                    <button class="btn btn-secondary btn-large" onclick="scrollToServices()">
+                        <i class="fas fa-list"></i> View Services
+                    </button>
+                </div>
+            </div>
+            <div class="hero-image">
+                <div class="hero-graphic" style="position: relative; display: flex; align-items: center; justify-content: center;">
+                    <i class="fas fa-government" style="font-size: 7rem; color: #4CAF50; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 1;"></i>
+                    <img src="https://idronline.org/wp-content/uploads/2023/11/women-sitting-in-circle.jpg" alt="grampanchayat" style="width: 400px; height: 400px; border-radius: 50%; object-fit: cover; position: relative; z-index: 2; box-shadow: 0 4px 16px rgba(0,0,0,0.15);">
+                </div>
+            </div>
+        </section>
+
+        <!-- Services Section -->
+        <section id="services" class="services-section">
+            <div class="container">
+                <h2>Available Services</h2>
+                <div class="services-grid" id="services-grid">
+                    <!-- Services will be loaded dynamically -->
+                    <div class="service-card" style="max-width:340px; margin:24px auto; box-shadow:0 2px 12px rgba(0,0,0,0.08); border-radius:16px; overflow:hidden; background:#fff;">
+                        <img src="https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=400&h=200&fit=crop" alt="Birth Certificate" style="width:100%; height:180px; object-fit:cover;">
+                        <div style="padding:20px;">
+                            <h3 style="margin-bottom:8px; color:#2563eb;">Birth Certificate</h3>
+                            <p style="color:#444; margin-bottom:12px;">Apply for official birth certificate with digital verification and quick processing.</p>
+                            <div style="display:flex; justify-content:space-between; align-items:center;">
+                                <span class="service-category bg-primary">Certificate</span>
+                                <span class="service-fee">₹50</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="service-card" style="max-width:340px; margin:24px auto; box-shadow:0 2px 12px rgba(0,0,0,0.08); border-radius:16px; overflow:hidden; background:#fff;">
+                        <img src="https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400&h=200&fit=crop" alt="Property Tax" style="width:100%; height:180px; object-fit:cover;">
+                        <div style="padding:20px;">
+                            <h3 style="margin-bottom:8px; color:#2563eb;">Property Tax Payment</h3>
+                            <p style="color:#444; margin-bottom:12px;">Pay your property tax online with instant receipt and payment history tracking.</p>
+                            <div style="display:flex; justify-content:space-between; align-items:center;">
+                                <span class="service-category bg-success">Payment</span>
+                                <span class="service-fee">Variable</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="service-card" style="max-width:340px; margin:24px auto; box-shadow:0 2px 12px rgba(0,0,0,0.08); border-radius:16px; overflow:hidden; background:#fff;">
+                        <img src="https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=400&h=200&fit=crop" alt="Trade License" style="width:100%; height:180px; object-fit:cover;">
+                        <div style="padding:20px;">
+                            <h3 style="margin-bottom:8px; color:#2563eb;">Trade License</h3>
+                            <p style="color:#444; margin-bottom:12px;">Apply for new trade license or renew existing license for your business.</p>
+                            <div style="display:flex; justify-content:space-between; align-items:center;">
+                                <span class="service-category bg-warning">License</span>
+                                <span class="service-fee">₹500</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="service-card" style="max-width:340px; margin:24px auto; box-shadow:0 2px 12px rgba(0,0,0,0.08); border-radius:16px; overflow:hidden; background:#fff;">
+                        <img src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?w=400&h=200&fit=crop" alt="Water Connection" style="width:100%; height:180px; object-fit:cover;">
+                        <div style="padding:20px;">
+                            <h3 style="margin-bottom:8px; color:#2563eb;">Water Connection</h3>
+                            <p style="color:#444; margin-bottom:12px;">Apply for new water connection or report issues with existing connection.</p>
+                            <div style="display:flex; justify-content:space-between; align-items:center;">
+                                <span class="service-category bg-info">Utility</span>
+                                <span class="service-fee">₹200</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="service-topic">
+                        <h3>1. Birth and Death Certificate Services</h3>
+                        <ul>
+                            <li>Application for birth certificate</li>
+                            <li>Application for death certificate</li>
+                            <li>Download and verification of issued certificates</li>
+                        </ul>
+                    </div>
+                    <div class="service-topic">
+                        <h3>2. Property Tax and House Tax Services</h3>
+                        <ul>
+                            <li>Payment of house/property tax</li>
+                            <li>Generation of property tax bills</li>
+                            <li>Assessment of new properties</li>
+                        </ul>
+                    </div>
+                    <div class="service-topic">
+                        <h3>3. Water Supply and Sanitation Services</h3>
+                        <ul>
+                            <li>Water connection application</li>
+                            <li>Bill payment for water usage</li>
+                            <li>Complaints regarding sanitation and water supply</li>
+                        </ul>
+                    </div>
+                    <div class="service-topic">
+                        <h3>4. Grievance Redressal Services</h3>
+                        <ul>
+                            <li>Online submission of complaints</li>
+                            <li>Status tracking of grievance redressal</li>
+                            <li>Communication with Panchayat officials</li>
+                        </ul>
+                    </div>
+                    <div class="service-topic">
+                        <h3>5. Welfare Scheme Applications</h3>
+                        <ul>
+                            <li>Application for schemes like old-age pension, widow pension, and disability pension</li>
+                            <li>Status tracking and beneficiary list viewing</li>
+                            <li>Download scheme-related forms</li>
+                        </ul>
+                    </div>
+                    <div class="service-topic">
+                        <h3>6. Trade/Shop License Services</h3>
+                        <ul>
+                            <li>Application for trade/shop licenses</li>
+                            <li>Renewal of existing licenses</li>
+                            <li>License fee payment and verification</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section id="about" class="about-section">
+            <div class="container">
+                <h2>About Digital E Gram Panchayat</h2>
+                <div class="about-content">
+                    <div class="about-text">
+                        <p>The Digital E Gram Panchayat system is designed to improve citizen service delivery by computerizing applications for gram panchayat services. Our platform provides a seamless digital experience for accessing government services.</p>
+                        <div class="features-list">
+                            <div class="feature-item">
+                                <i class="fas fa-shield-alt"></i>
+                                <h3>Secure</h3>
+                                <p>Your data is protected with industry-standard security measures</p>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-clock"></i>
+                                <h3>Fast</h3>
+                                <p>Quick and efficient service processing</p>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-mobile-alt"></i>
+                                <h3>Accessible</h3>
+                                <p>Available on all devices and platforms</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="contact-section">
+            <div class="container">
+                <h2>Contact Us</h2>
+                <div class="contact-content">
+                    <div class="contact-info">
+                        <div class="contact-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <div>
+                                <h3>Address</h3>
+                                <p>Gram Panchayat Office, Village Center</p>
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-phone"></i>
+                            <div>
+                                <h3>Phone</h3>
+                                <p>+91 1234567890</p>
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-envelope"></i>
+                            <div>
+                                <h3>Email</h3>
+                                <p>info@digitalgrampanchayat.gov.in</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Login Modal -->
+    <div id="login-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Login</h2>
+                <span class="close" onclick="closeModal('login-modal')">&times;</span>
+            </div>
+            <form id="login-form" class="auth-form">
+                <div class="form-group">
+                    <label for="login-email">Email</label>
+                    <input type="email" id="login-email" required>
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Password</label>
+                    <input type="password" id="login-password" required>
+                </div>
+                <div class="form-group">
+                    <label for="login-role">Login As</label>
+                    <select id="login-role" required>
+                        <option value="">Select Role</option>
+                        <option value="user">Citizen</option>
+                        <option value="staff">Staff</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary btn-full">Login</button>
+            </form>
+            <div class="modal-footer">
+                <p>Don't have an account? <a href="#" onclick="showRegisterModal(); console.log('Login modal register link clicked');">Register here</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Register Modal -->
+    <div id="register-modal" class="modal">
+        <div class="modal-content" style="max-height: 90vh; overflow-y: auto;">
+            <div class="modal-header">
+                <h2>Register</h2>
+                <span class="close" onclick="closeModal('register-modal')">&times;</span>
+            </div>
+            <form id="register-form" class="auth-form">
+                <div class="form-group">
+                    <label for="register-name">Full Name</label>
+                    <input type="text" id="register-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="register-email">Email</label>
+                    <input type="email" id="register-email" required>
+                </div>
+                <div class="form-group">
+                    <label for="register-phone">Phone Number</label>
+                    <input type="tel" id="register-phone" required>
+                </div>
+                <div class="form-group">
+                    <label for="register-address">Address</label>
+                    <textarea id="register-address" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="register-password">Password</label>
+                    <input type="password" id="register-password" required>
+                </div>
+                <div class="form-group">
+                    <label for="register-confirm-password">Confirm Password</label>
+                    <input type="password" id="register-confirm-password" required>
+                </div>
+                <button type="submit" class="btn btn-primary btn-full" style="visibility: visible !important; display: inline-flex !important; opacity: 1 !important;" onclick="handleRegistration(event)">Register</button>
+            </form>
+            <div class="modal-footer">
+                <p>Already have an account? <a href="#" onclick="showLoginModal()">Login here</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Dashboard -->
+    <div id="user-dashboard" class="dashboard hidden">
+        <div class="dashboard-header">
+            <h2>Welcome, <span id="user-name">User</span></h2>
+            <button class="btn btn-secondary" onclick="logout()">Logout</button>
+        </div>
+        <div class="dashboard-content">
+            <div class="dashboard-sidebar">
+                <nav class="dashboard-nav">
+                    <a href="#" class="nav-item active" data-section="overview">
+                        <i class="fas fa-home"></i> Overview
+                    </a>
+                    <a href="#" class="nav-item" data-section="services">
+                        <i class="fas fa-list"></i> Services
+                    </a>
+                    <a href="#" class="nav-item" data-section="applications">
+                        <i class="fas fa-file-alt"></i> My Applications
+                    </a>
+                    <a href="#" class="nav-item" data-section="profile">
+                        <i class="fas fa-user"></i> Profile
+                    </a>
+                </nav>
+            </div>
+            <div class="dashboard-main">
+                <div id="overview-section" class="dashboard-section active">
+                    <h3>Dashboard Overview</h3>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <h4>Total Applications</h4>
+                            <p id="total-applications">12</p>
+                        </div>
+                        <div class="stat-card">
+                            <h4>Pending</h4>
+                            <p id="pending-applications">3</p>
+                        </div>
+                        <div class="stat-card">
+                            <h4>Approved</h4>
+                            <p id="approved-applications">8</p>
+                        </div>
+                        <div class="stat-card">
+                            <h4>Rejected</h4>
+                            <p id="rejected-applications">1</p>
+                        </div>
+                    </div>
+                </div>
+                <div id="services-section" class="dashboard-section">
+                    <h3>Available Services</h3>
+                    <div class="services-list" id="user-services-list">
+                        <!-- Services will be loaded here -->
+                        <div class="service-item">
+                            <div class="service-info">
+                                <h4>Birth Certificate</h4>
+                                <p>Apply for official birth certificate</p>
+                                <span class="service-category">Certificate</span>
+                            </div>
+                            <div class="service-actions">
+                                <span class="service-fee">₹50</span>
+                                <button class="btn btn-primary btn-sm" onclick="applyForService('birth-certificate')">Apply</button>
+                            </div>
+                        </div>
+
+                        <div class="service-item">
+                            <div class="service-info">
+                                <h4>Death Certificate</h4>
+                                <p>Apply for official death certificate</p>
+                                <span class="service-category">Certificate</span>
+                            </div>
+                            <div class="service-actions">
+                                <span class="service-fee">₹50</span>
+                                <button class="btn btn-primary btn-sm" onclick="applyForService('death-certificate')">Apply</button>
+                            </div>
+                        </div>
+
+                        <div class="service-item">
+                            <div class="service-info">
+                                <h4>Property Tax Payment</h4>
+                                <p>Pay your property tax online</p>
+                                <span class="service-category">Payment</span>
+                            </div>
+                            <div class="service-actions">
+                                <span class="service-fee">Variable</span>
+                                <button class="btn btn-primary btn-sm" onclick="applyForService('property-tax')">Pay Now</button>
+                            </div>
+                        </div>
+
+                        <div class="service-item">
+                            <div class="service-info">
+                                <h4>Trade License</h4>
+                                <p>Apply for new trade license</p>
+                                <span class="service-category">License</span>
+                            </div>
+                            <div class="service-actions">
+                                <span class="service-fee">₹500</span>
+                                <button class="btn btn-primary btn-sm" onclick="applyForService('trade-license')">Apply</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="applications-section" class="dashboard-section">
+                    <h3>My Applications</h3>
+                    <div class="applications-list" id="user-applications-list">
+                        <!-- Applications will be loaded here -->
+                        <div class="application-item">
+                            <div class="application-header">
+                                <h4>Birth Certificate Application</h4>
+                                <span class="application-status status-pending">Pending</span>
+                            </div>
+                            <div class="application-details">
+                                <p><strong>Application ID:</strong> BC2024001</p>
+                                <p><strong>Applied Date:</strong> January 15, 2024</p>
+                                <p><strong>Expected Completion:</strong> January 22, 2024</p>
+                                <p><strong>Fee:</strong> ₹50 (Paid)</p>
+                            </div>
+                            <div class="application-actions">
+                                <button class="btn btn-secondary btn-sm" onclick="viewApplication('BC2024001')">View Details</button>
+                                <button class="btn btn-primary btn-sm" onclick="trackApplication('BC2024001')">Track Status</button>
+                            </div>
+                        </div>
+
+                        <div class="application-item">
+                            <div class="application-header">
+                                <h4>Property Tax Payment</h4>
+                                <span class="application-status status-approved">Completed</span>
+                            </div>
+                            <div class="application-details">
+                                <p><strong>Transaction ID:</strong> PT2024002</p>
+                                <p><strong>Payment Date:</strong> January 10, 2024</p>
+                                <p><strong>Amount:</strong> ₹2,500</p>
+                                <p><strong>Receipt:</strong> Available for download</p>
+                            </div>
+                            <div class="application-actions">
+                                <button class="btn btn-secondary btn-sm" onclick="downloadReceipt('PT2024002')">Download Receipt</button>
+                                <button class="btn btn-primary btn-sm" onclick="viewApplication('PT2024002')">View Details</button>
+                            </div>
+                        </div>
+
+                        <div class="application-item">
+                            <div class="application-header">
+                                <h4>Trade License Application</h4>
+                                <span class="application-status status-rejected">Under Review</span>
+                            </div>
+                            <div class="application-details">
+                                <p><strong>Application ID:</strong> TL2024003</p>
+                                <p><strong>Applied Date:</strong> January 8, 2024</p>
+                                <p><strong>Business Type:</strong> Grocery Store</p>
+                                <p><strong>Fee:</strong> ₹500 (Paid)</p>
+                            </div>
+                            <div class="application-actions">
+                                <button class="btn btn-secondary btn-sm" onclick="viewApplication('TL2024003')">View Details</button>
+                                <button class="btn btn-warning btn-sm" onclick="uploadDocuments('TL2024003')">Upload Documents</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="profile-section" class="dashboard-section">
+                    <h3>My Profile</h3>
+                    <form id="profile-form" class="profile-form">
+                        <div class="form-group">
+                            <label for="profile-name">Full Name</label>
+                            <input type="text" id="profile-name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="profile-email">Email</label>
+                            <input type="email" id="profile-email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="profile-phone">Phone Number</label>
+                            <input type="tel" id="profile-phone" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="profile-address">Address</label>
+                            <textarea id="profile-address" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Update Profile</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Staff Dashboard -->
+    <div id="staff-dashboard" class="dashboard hidden">
+        <div class="dashboard-header">
+            <h2>Staff Dashboard</h2>
+            <button class="btn btn-secondary" onclick="logout()">Logout</button>
+        </div>
+        <div class="dashboard-content">
+            <div class="dashboard-sidebar">
+                <nav class="dashboard-nav">
+                    <a href="#" class="nav-item active" data-section="staff-overview">
+                        <i class="fas fa-home"></i> Overview
+                    </a>
+                    <a href="#" class="nav-item" data-section="staff-applications">
+                        <i class="fas fa-file-alt"></i> Applications
+                    </a>
+                    <a href="#" class="nav-item" data-section="staff-services">
+                        <i class="fas fa-list"></i> Services
+                    </a>
+                </nav>
+            </div>
+            <div class="dashboard-main">
+                <div id="staff-overview-section" class="dashboard-section active">
+                    <h3>Staff Overview</h3>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <h4>Pending Applications</h4>
+                            <p id="staff-pending-applications">15</p>
+                        </div>
+                        <div class="stat-card">
+                            <h4>Processed Today</h4>
+                            <p id="staff-processed-today">7</p>
+                        </div>
+                    </div>
+                </div>
+                <div id="staff-applications-section" class="dashboard-section">
+                    <h3>Applications to Process</h3>
+                    <div class="applications-list" id="staff-applications-list">
+                        <!-- Applications will be loaded here -->
+                        <div class="application-item staff-application">
+                            <div class="application-header">
+                                <h4>Birth Certificate - Rajesh Kumar</h4>
+                                <span class="application-status status-pending">Pending Review</span>
+                            </div>
+                            <div class="application-details">
+                                <p><strong>Application ID:</strong> BC2024004</p>
+                                <p><strong>Applicant:</strong> Rajesh Kumar</p>
+                                <p><strong>Applied Date:</strong> January 16, 2024</p>
+                                <p><strong>Priority:</strong> Normal</p>
+                                <p><strong>Documents:</strong> 3 files uploaded</p>
+                            </div>
+                            <div class="application-actions">
+                                <button class="btn btn-success btn-sm" onclick="approveApplication('BC2024004')">Approve</button>
+                                <button class="btn btn-danger btn-sm" onclick="rejectApplication('BC2024004')">Reject</button>
+                                <button class="btn btn-secondary btn-sm" onclick="viewApplication('BC2024004')">View Details</button>
+                            </div>
+                        </div>
+
+                        <div class="application-item staff-application">
+                            <div class="application-header">
+                                <h4>Death Certificate - Priya Sharma</h4>
+                                <span class="application-status status-pending">Pending Review</span>
+                            </div>
+                            <div class="application-details">
+                                <p><strong>Application ID:</strong> DC2024005</p>
+                                <p><strong>Applicant:</strong> Priya Sharma</p>
+                                <p><strong>Applied Date:</strong> January 15, 2024</p>
+                                <p><strong>Priority:</strong> High</p>
+                                <p><strong>Documents:</strong> 4 files uploaded</p>
+                            </div>
+                            <div class="application-actions">
+                                <button class="btn btn-success btn-sm" onclick="approveApplication('DC2024005')">Approve</button>
+                                <button class="btn btn-danger btn-sm" onclick="rejectApplication('DC2024005')">Reject</button>
+                                <button class="btn btn-secondary btn-sm" onclick="viewApplication('DC2024005')">View Details</button>
+                            </div>
+                        </div>
+
+                        <div class="application-item staff-application">
+                            <div class="application-header">
+                                <h4>Trade License - Amit Enterprises</h4>
+                                <span class="application-status status-pending">Pending Documents</span>
+                            </div>
+                            <div class="application-details">
+                                <p><strong>Application ID:</strong> TL2024006</p>
+                                <p><strong>Applicant:</strong> Amit Singh</p>
+                                <p><strong>Applied Date:</strong> January 14, 2024</p>
+                                <p><strong>Business Type:</strong> Electronics Shop</p>
+                                <p><strong>Documents:</strong> 2 files uploaded (1 missing)</p>
+                            </div>
+                            <div class="application-actions">
+                                <button class="btn btn-warning btn-sm" onclick="requestDocuments('TL2024006')">Request Documents</button>
+                                <button class="btn btn-secondary btn-sm" onclick="viewApplication('TL2024006')">View Details</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="staff-services-section" class="dashboard-section">
+                    <h3>Available Services</h3>
+                    <div class="services-list" id="staff-services-list">
+                        <!-- Services will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Dashboard -->
+    <div id="admin-dashboard" class="dashboard hidden">
+        <div class="dashboard-header">
+            <h2>Admin Dashboard</h2>
+            <button class="btn btn-secondary" onclick="logout()">Logout</button>
+        </div>
+        <div class="dashboard-content">
+            <div class="dashboard-sidebar">
+                <nav class="dashboard-nav">
+                    <a href="#" class="nav-item active" data-section="admin-overview">
+                        <i class="fas fa-home"></i> Overview
+                    </a>
+                    <a href="#" class="nav-item" data-section="admin-services">
+                        <i class="fas fa-cogs"></i> Manage Services
+                    </a>
+                    <a href="#" class="nav-item" data-section="admin-applications">
+                        <i class="fas fa-file-alt"></i> All Applications
+                    </a>
+                    <a href="#" class="nav-item" data-section="admin-users">
+                        <i class="fas fa-users"></i> Manage Users
+                    </a>
+                    <a href="#" class="nav-item" data-section="admin-logs">
+                        <i class="fas fa-chart-line"></i> System Logs
+                    </a>
+                </nav>
+            </div>
+            <div class="dashboard-main">
+                <div id="admin-overview-section" class="dashboard-section active">
+                    <h3>Admin Overview</h3>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <h4>Total Users</h4>
+                            <p id="admin-total-users">247</p>
+                        </div>
+                        <div class="stat-card">
+                            <h4>Total Applications</h4>
+                            <p id="admin-total-applications">1,456</p>
+                        </div>
+                        <div class="stat-card">
+                            <h4>Active Services</h4>
+                            <p id="admin-active-services">8</p>
+                        </div>
+                        <div class="stat-card">
+                            <h4>Today's Activity</h4>
+                            <p id="admin-today-activity">23</p>
+                        </div>
+                    </div>
+                </div>
+                <div id="admin-services-section" class="dashboard-section">
+                    <h3>Manage Services</h3>
+                    <button class="btn btn-primary" onclick="showAddServiceModal()">
+                        <i class="fas fa-plus"></i> Add New Service
+                    </button>
+                    <div class="services-management" id="admin-services-management">
+                        <!-- Services management will be loaded here -->
+                        <div class="service-management-item">
+                            <div class="service-info">
+                                <h4>Birth Certificate</h4>
+                                <p>Official birth certificate issuance service</p>
+                                <span class="service-status active">Active</span>
+                            </div>
+                            <div class="service-stats">
+                                <span>Applications: 45</span>
+                                <span>Fee: ₹50</span>
+                            </div>
+                            <div class="service-actions">
+                                <button class="btn btn-primary btn-sm" onclick="editService('birth-certificate')">Edit</button>
+                                <button class="btn btn-warning btn-sm" onclick="toggleService('birth-certificate')">Disable</button>
+                            </div>
+                        </div>
+
+                        <div class="service-management-item">
+                            <div class="service-info">
+                                <h4>Death Certificate</h4>
+                                <p>Official death certificate issuance service</p>
+                                <span class="service-status active">Active</span>
+                            </div>
+                            <div class="service-stats">
+                                <span>Applications: 23</span>
+                                <span>Fee: ₹50</span>
+                            </div>
+                            <div class="service-actions">
+                                <button class="btn btn-primary btn-sm" onclick="editService('death-certificate')">Edit</button>
+                                <button class="btn btn-warning btn-sm" onclick="toggleService('death-certificate')">Disable</button>
+                            </div>
+                        </div>
+
+                        <div class="service-management-item">
+                            <div class="service-info">
+                                <h4>Trade License</h4>
+                                <p>Business trade license application and renewal</p>
+                                <span class="service-status active">Active</span>
+                            </div>
+                            <div class="service-stats">
+                                <span>Applications: 67</span>
+                                <span>Fee: ₹500</span>
+                            </div>
+                            <div class="service-actions">
+                                <button class="btn btn-primary btn-sm" onclick="editService('trade-license')">Edit</button>
+                                <button class="btn btn-warning btn-sm" onclick="toggleService('trade-license')">Disable</button>
+                            </div>
+                        </div>
+
+                        <div class="service-management-item">
+                            <div class="service-info">
+                                <h4>Water Connection</h4>
+                                <p>New water connection and maintenance requests</p>
+                                <span class="service-status inactive">Inactive</span>
+                            </div>
+                            <div class="service-stats">
+                                <span>Applications: 12</span>
+                                <span>Fee: ₹200</span>
+                            </div>
+                            <div class="service-actions">
+                                <button class="btn btn-primary btn-sm" onclick="editService('water-connection')">Edit</button>
+                                <button class="btn btn-success btn-sm" onclick="toggleService('water-connection')">Enable</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="admin-applications-section" class="dashboard-section">
+                    <h3>All Applications</h3>
+                    <div class="applications-list" id="admin-applications-list">
+                        <!-- All applications will be loaded here -->
+                    </div>
+                </div>
+                <div id="admin-users-section" class="dashboard-section">
+                    <h3>Manage Users</h3>
+                    <div class="users-management" id="admin-users-management">
+                        <!-- Users management will be loaded here -->
+                        <div class="user-management-item">
+                            <div class="user-info">
+                                <div class="user-avatar">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <div class="user-details">
+                                    <h4>Rajesh Kumar</h4>
+                                    <p>rajesh.kumar@email.com</p>
+                                    <span class="user-role citizen">Citizen</span>
+                                </div>
+                            </div>
+                            <div class="user-stats">
+                                <span>Applications: 3</span>
+                                <span>Joined: Jan 2024</span>
+                                <span class="user-status active">Active</span>
+                            </div>
+                            <div class="user-actions">
+                                <button class="btn btn-primary btn-sm" onclick="viewUser('user001')">View</button>
+                                <button class="btn btn-warning btn-sm" onclick="suspendUser('user001')">Suspend</button>
+                            </div>
+                        </div>
+
+                        <div class="user-management-item">
+                            <div class="user-info">
+                                <div class="user-avatar">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <div class="user-details">
+                                    <h4>Priya Sharma</h4>
+                                    <p>priya.sharma@email.com</p>
+                                    <span class="user-role citizen">Citizen</span>
+                                </div>
+                            </div>
+                            <div class="user-stats">
+                                <span>Applications: 5</span>
+                                <span>Joined: Dec 2023</span>
+                                <span class="user-status active">Active</span>
+                            </div>
+                            <div class="user-actions">
+                                <button class="btn btn-primary btn-sm" onclick="viewUser('user002')">View</button>
+                                <button class="btn btn-warning btn-sm" onclick="suspendUser('user002')">Suspend</button>
+                            </div>
+                        </div>
+
+                        <div class="user-management-item">
+                            <div class="user-info">
+                                <div class="user-avatar">
+                                    <i class="fas fa-user-tie"></i>
+                                </div>
+                                <div class="user-details">
+                                    <h4>Suresh Patel</h4>
+                                    <p>suresh.patel@grampanchayat.gov.in</p>
+                                    <span class="user-role staff">Staff</span>
+                                </div>
+                            </div>
+                            <div class="user-stats">
+                                <span>Processed: 89</span>
+                                <span>Joined: Nov 2023</span>
+                                <span class="user-status active">Active</span>
+                            </div>
+                            <div class="user-actions">
+                                <button class="btn btn-primary btn-sm" onclick="viewUser('staff001')">View</button>
+                                <button class="btn btn-secondary btn-sm" onclick="editUser('staff001')">Edit Role</button>
+                            </div>
+                        </div>
+
+                        <div class="user-management-item">
+                            <div class="user-info">
+                                <div class="user-avatar">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <div class="user-details">
+                                    <h4>Amit Singh</h4>
+                                    <p>amit.singh@email.com</p>
+                                    <span class="user-role citizen">Citizen</span>
+                                </div>
+                            </div>
+                            <div class="user-stats">
+                                <span>Applications: 1</span>
+                                <span>Joined: Jan 2024</span>
+                                <span class="user-status suspended">Suspended</span>
+                            </div>
+                            <div class="user-actions">
+                                <button class="btn btn-primary btn-sm" onclick="viewUser('user003')">View</button>
+                                <button class="btn btn-success btn-sm" onclick="activateUser('user003')">Activate</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="admin-logs-section" class="dashboard-section">
+                    <h3>System Logs</h3>
+                    <div class="logs-container" id="admin-logs-container">
+                        <!-- System logs will be loaded here -->
+                        <div class="log-entry">
+                            <div class="log-timestamp">2024-01-16 14:30:25</div>
+                            <div class="log-level info">INFO</div>
+                            <div class="log-message">User 'rajesh.kumar@email.com' successfully logged in</div>
+                            <div class="log-details">IP: 192.168.1.105, Browser: Chrome</div>
+                        </div>
+
+                        <div class="log-entry">
+                            <div class="log-timestamp">2024-01-16 14:25:12</div>
+                            <div class="log-level success">SUCCESS</div>
+                            <div class="log-message">Application BC2024004 approved by staff member</div>
+                            <div class="log-details">Staff: suresh.patel@grampanchayat.gov.in</div>
+                        </div>
+
+                        <div class="log-entry">
+                            <div class="log-timestamp">2024-01-16 14:20:45</div>
+                            <div class="log-level info">INFO</div>
+                            <div class="log-message">New application submitted: TL2024007</div>
+                            <div class="log-details">Service: Trade License, User: amit.singh@email.com</div>
+                        </div>
+
+                        <div class="log-entry">
+                            <div class="log-timestamp">2024-01-16 14:15:33</div>
+                            <div class="log-level warning">WARNING</div>
+                            <div class="log-message">Failed login attempt detected</div>
+                            <div class="log-details">IP: 192.168.1.200, Attempts: 3</div>
+                        </div>
+
+                        <div class="log-entry">
+                            <div class="log-timestamp">2024-01-16 14:10:18</div>
+                            <div class="log-level info">INFO</div>
+                            <div class="log-message">Payment processed successfully</div>
+                            <div class="log-details">Transaction: PT2024008, Amount: ₹1,200</div>
+                        </div>
+
+                        <div class="log-entry">
+                            <div class="log-timestamp">2024-01-16 14:05:07</div>
+                            <div class="log-level error">ERROR</div>
+                            <div class="log-message">Document upload failed</div>
+                            <div class="log-details">Application: DC2024006, Error: File size exceeded</div>
+                        </div>
+
+                        <div class="log-entry">
+                            <div class="log-timestamp">2024-01-16 14:00:52</div>
+                            <div class="log-level info">INFO</div>
+                            <div class="log-message">New user registration completed</div>
+                            <div class="log-details">User: neha.gupta@email.com, Role: Citizen</div>
+                        </div>
+
+                        <div class="log-entry">
+                            <div class="log-timestamp">2024-01-16 13:55:41</div>
+                            <div class="log-level success">SUCCESS</div>
+                            <div class="log-message">Service configuration updated</div>
+                            <div class="log-details">Service: Water Connection, Admin: admin@grampanchayat.gov.in</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Service Modal -->
+    <div id="add-service-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add New Service</h2>
+                <span class="close" onclick="closeModal('add-service-modal')">&times;</span>
+            </div>
+            <form id="add-service-form" class="service-form">
+                <div class="form-group">
+                    <label for="service-name">Service Name</label>
+                    <input type="text" id="service-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="service-description">Description</label>
+                    <textarea id="service-description" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="service-category">Category</label>
+                    <select id="service-category" required>
+                        <option value="">Select Category</option>
+                        <option value="certificate">Certificate</option>
+                        <option value="license">License</option>
+                        <option value="permit">Permit</option>
+                        <option value="document">Document</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="service-requirements">Requirements</label>
+                    <textarea id="service-requirements" placeholder="List the required documents and information"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="service-fee">Processing Fee</label>
+                    <input type="number" id="service-fee" min="0" step="0.01">
+                </div>
+                <button type="submit" class="btn btn-primary btn-full">Add Service</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Application Modal -->
+    <div id="application-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Apply for Service</h2>
+                <span class="close" onclick="closeModal('application-modal')">&times;</span>
+            </div>
+            <form id="application-form" class="application-form">
+                <div class="form-group">
+                    <label for="application-service">Service</label>
+                    <select id="application-service" required>
+                        <option value="">Select Service</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="application-reason">Reason for Application</label>
+                    <textarea id="application-reason" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="application-documents">Supporting Documents</label>
+                    <input type="file" id="application-documents" multiple>
+                </div>
+                <button type="submit" class="btn btn-primary btn-full">Submit Application</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Digital E Gram Panchayat</h3>
+                    <p>Empowering citizens with digital access to government services</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#services">Services</a></li>
+                        <li><a href="#about">About</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Contact Info</h3>
+                    <p><i class="fas fa-phone"></i> +91 1234567890</p>
+                    <p><i class="fas fa-envelope"></i> info@digitalgrampanchayat.gov.in</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Digital E Gram Panchayat. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-storage-compat.js"></script>
+
+    <!-- Application Scripts -->
+    <script src="js/firebase-config.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/database.js"></script>
+    <script src="js/services.js"></script>
+    <script src="js/applications.js"></script>
+    <script src="js/user.js"></script>
+    <script src="js/staff.js"></script>
+    <script src="js/admin.js"></script>
+    <script src="js/main.js"></script>
+
+    <!-- Debug Script for Register Button -->
+    <script>
+        // Debug function to test register button
+        function debugRegisterButton() {
+            console.log('=== REGISTER BUTTON DEBUG ===');
+            console.log('1. showRegisterModal function exists:', typeof showRegisterModal);
+            console.log('2. DOM utility exists:', typeof window.DOM);
+            console.log('3. AuthManager exists:', typeof window.authManager);
+            console.log('4. Firebase exists:', typeof firebase);
+            console.log('5. Register modal element exists:', !!document.getElementById('register-modal'));
+
+            // Test the function
+            if (typeof showRegisterModal === 'function') {
+                console.log('6. Attempting to call showRegisterModal...');
+                try {
+                    showRegisterModal();
+                    console.log('7. ✅ showRegisterModal called successfully');
+                } catch (error) {
+                    console.log('7. ❌ Error calling showRegisterModal:', error);
+                }
+            } else {
+                console.log('6. ❌ showRegisterModal function not available');
+            }
+        }
+
+        // Ensure proper initial state when page loads
+        window.addEventListener('load', function() {
+            // Force hide all modals
+            const modals = document.querySelectorAll('.modal');
+            modals.forEach(modal => {
+                modal.style.display = 'none';
+            });
+
+            // Force show main content
+            const mainContent = document.getElementById('main-content');
+            if (mainContent) {
+                mainContent.style.display = 'block';
+            }
+
+            // Hide all dashboards initially
+            const dashboards = ['user-dashboard', 'staff-dashboard', 'admin-dashboard'];
+            dashboards.forEach(dashboardId => {
+                const dashboard = document.getElementById(dashboardId);
+                if (dashboard) {
+                    dashboard.style.display = 'none';
+                }
+            });
+
+            // Reset body overflow
+            document.body.style.overflow = 'auto';
+
+            console.log('✅ Initial page state set correctly');
+        });
+
+        // Enhanced showRegisterModal with better error handling
+        window.showRegisterModal = function() {
+            console.log('🔍 showRegisterModal called!');
+
+            // Force show the modal regardless of other issues
+            const modal = document.getElementById('register-modal');
+            if (modal) {
+                modal.style.display = 'block';
+                document.body.style.overflow = 'hidden';
+                console.log('✅ Register modal displayed');
+
+                // Focus on first input
+                setTimeout(() => {
+                    const firstInput = modal.querySelector('input');
+                    if (firstInput) firstInput.focus();
+                }, 100);
+            } else {
+                console.error('❌ Register modal element not found');
+                alert('Register modal not found. Please refresh the page.');
+            }
+        };
+
+        // Enhanced closeModal function
+        window.closeModal = function(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+                console.log('Modal closed:', modalId);
+            }
+        };
+
+        // Test Firebase connection
+        function testFirebaseConnection() {
+            console.log('🔥 Testing Firebase connection...');
+
+            if (typeof firebase === 'undefined') {
+                console.error('❌ Firebase not loaded');
+                return false;
+            }
+
+            if (!window.firebaseInitialized) {
+                console.error('❌ Firebase not initialized properly');
+                return false;
+            }
+
+            console.log('✅ Firebase loaded and initialized');
+            return true;
+        }
+
+        // Enhanced registration test
+        window.testRegistration = async function() {
+            console.log('🧪 Testing registration process...');
+
+            if (!testFirebaseConnection()) {
+                alert('Firebase connection failed. Check console for details.');
+                return;
+            }
+
+            // Test with dummy data
+            const testData = {
+                name: 'Test User',
+                email: 'test' + Date.now() + '@example.com',
+                phone: '1234567890',
+                address: 'Test Address',
+                password: 'TestPassword123',
+                confirmPassword: 'TestPassword123'
+            };
+
+            console.log('Testing with data:', testData);
+
+            // Test direct Firebase registration
+            try {
+                console.log('🔥 Testing direct Firebase registration...');
+
+                const userCredential = await firebase.auth().createUserWithEmailAndPassword(
+                    testData.email,
+                    testData.password
+                );
+
+                console.log('✅ Test user created:', userCredential.user.uid);
+
+                // Save to Realtime Database
+                const userData = {
+                    name: testData.name,
+                    email: testData.email,
+                    phone: testData.phone,
+                    address: testData.address,
+                    role: 'user',
+                    createdAt: firebase.database.ServerValue.TIMESTAMP,
+                    updatedAt: firebase.database.ServerValue.TIMESTAMP
+                };
+
+                await firebase.database().ref('users/' + userCredential.user.uid).set(userData);
+                console.log('✅ Test user data saved to Realtime Database');
+
+                alert('✅ Registration test successful! Check Firebase Console → Realtime Database → users');
+
+            } catch (error) {
+                console.error('❌ Registration test failed:', error);
+                alert('Registration test failed: ' + error.message);
+            }
+        };
+
+        // Backup registration handler
+        window.handleRegistration = async function(event) {
+            if (event) event.preventDefault();
+
+            console.log('🔄 Backup registration handler called');
+
+            // Get form data
+            const formData = {
+                name: document.getElementById('register-name').value,
+                email: document.getElementById('register-email').value,
+                phone: document.getElementById('register-phone').value,
+                address: document.getElementById('register-address').value,
+                password: document.getElementById('register-password').value,
+                confirmPassword: document.getElementById('register-confirm-password').value
+            };
+
+            console.log('Form data collected:', formData);
+
+            // Basic validation
+            if (!formData.name || !formData.email || !formData.password) {
+                alert('Please fill in all required fields');
+                return;
+            }
+
+            if (formData.password !== formData.confirmPassword) {
+                alert('Passwords do not match');
+                return;
+            }
+
+            if (formData.password.length < 6) {
+                alert('Password must be at least 6 characters');
+                return;
+            }
+
+            try {
+                console.log('🔥 Attempting Firebase registration...');
+                console.log('Form data to register:', formData);
+
+                // Check Firebase services
+                console.log('Firebase initialized:', window.firebaseInitialized);
+                console.log('Firebase auth available:', !!firebase.auth);
+                console.log('Firebase database available:', !!firebase.database);
+                console.log('Database URL:', firebase.app().options.databaseURL);
+
+                if (!window.firebaseInitialized) {
+                    throw new Error('Firebase not initialized. Please check your configuration.');
+                }
+
+                // Create user
+                const userCredential = await firebase.auth().createUserWithEmailAndPassword(
+                    formData.email,
+                    formData.password
+                );
+
+                console.log('✅ User created:', userCredential.user.uid);
+
+                // Update user profile with display name
+                await userCredential.user.updateProfile({
+                    displayName: formData.name
+                });
+                console.log('✅ User profile updated with display name');
+
+                // Save user data to Realtime Database
+                const userData = {
+                    name: formData.name,
+                    email: formData.email,
+                    phone: formData.phone,
+                    address: formData.address,
+                    role: 'user',
+                    createdAt: firebase.database.ServerValue.TIMESTAMP,
+                    updatedAt: firebase.database.ServerValue.TIMESTAMP
+                };
+
+                await firebase.database().ref('users/' + userCredential.user.uid).set(userData);
+                console.log('✅ User data saved to Realtime Database');
+
+                // Also save to Firestore for compatibility (optional)
+                try {
+                    await firebase.firestore().collection('users').doc(userCredential.user.uid).set({
+                        ...userData,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    console.log('✅ User data also saved to Firestore');
+                } catch (firestoreError) {
+                    console.warn('⚠️ Firestore save failed (this is optional):', firestoreError);
+                }
+
+                // Success
+                alert('Registration successful! You can now login.');
+                closeModal('register-modal');
+                document.getElementById('register-form').reset();
+
+            } catch (error) {
+                console.error('❌ Registration failed:', error);
+
+                let errorMessage = 'Registration failed: ';
+                switch (error.code) {
+                    case 'auth/email-already-in-use':
+                        errorMessage += 'Email is already registered';
+                        break;
+                    case 'auth/invalid-email':
+                        errorMessage += 'Invalid email address';
+                        break;
+                    case 'auth/operation-not-allowed':
+                        errorMessage += 'Email/password registration is not enabled. Please contact administrator.';
+                        break;
+                    case 'auth/weak-password':
+                        errorMessage += 'Password is too weak';
+                        break;
+                    default:
+                        errorMessage += error.message;
+                }
+
+                alert(errorMessage);
+            }
+        };
+    </script>
+</body>
+</html>
