@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Debug - Digital E Gram Panchayat</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/auth.css">
+    <style>
+        .debug-container {
+            max-width: 800px;
+            margin: 100px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .debug-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .debug-button {
+            margin: 5px;
+            padding: 10px 15px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .debug-button:hover {
+            background: #0056b3;
+        }
+        #debug-output {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            white-space: pre-wrap;
+            font-family: monospace;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .login-test-form {
+            background: #f0f8ff;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .form-group {
+            margin: 15px 0;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="debug-container">
+        <h1>Login Debug Page</h1>
+        <p>This page is for debugging the login functionality</p>
+        
+        <div class="debug-section">
+            <h3>System Status</h3>
+            <button class="debug-button" onclick="checkSystemStatus()">Check System Status</button>
+            <button class="debug-button" onclick="createTestUser()">Create Test User</button>
+            <button class="debug-button" onclick="debugAuth()">Debug Auth Info</button>
+            <button class="debug-button" onclick="clearDebugOutput()">Clear Output</button>
+        </div>
+
+        <div class="debug-section">
+            <h3>Quick Login Test</h3>
+            <div class="login-test-form">
+                <div class="form-group">
+                    <label for="test-email">Email:</label>
+                    <input type="email" id="test-email" value="test@example.com">
+                </div>
+                <div class="form-group">
+                    <label for="test-password">Password:</label>
+                    <input type="password" id="test-password" value="password123">
+                </div>
+                <div class="form-group">
+                    <label for="test-role">Role:</label>
+                    <select id="test-role">
+                        <option value="">Select Role</option>
+                        <option value="user">Citizen</option>
+                        <option value="staff">Staff</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                </div>
+                <button class="debug-button" onclick="testLogin()">Test Login</button>
+                <button class="debug-button" onclick="testLogout()">Test Logout</button>
+            </div>
+        </div>
+
+        <div class="debug-section">
+            <h3>Profile Settings Tests</h3>
+            <button class="debug-button" onclick="testProfileFormExists()">Check Profile Form</button>
+            <button class="debug-button" onclick="testProfileUpdate()">Test Profile Update</button>
+            <button class="debug-button" onclick="fillTestProfileData()">Fill Test Profile Data</button>
+            <button class="debug-button" onclick="checkEventListeners()">Check Event Listeners</button>
+            <button class="debug-button" onclick="openProfileTestPage()">Open Profile Test Page</button>
+            <button class="debug-button" onclick="forceShowProfile()">Force Show Profile Section</button>
+        </div>
+
+        <div class="debug-section">
+            <h3>Dashboard Redirection Tests</h3>
+            <button class="debug-button" onclick="testDashboardRedirection()">Test Dashboard Redirection</button>
+            <button class="debug-button" onclick="testLoginToDashboard()">Test Complete Login Flow</button>
+            <button class="debug-button" onclick="openUserDashboard()">Open User Dashboard</button>
+            <button class="debug-button" onclick="testSessionPersistence()">Test Session Persistence</button>
+        </div>
+
+        <div class="debug-section">
+            <h3>Modal Switching Tests</h3>
+            <button class="debug-button" onclick="testLoginHereButton()">Test "Login Here" Button</button>
+            <button class="debug-button" onclick="testRegisterHereButton()">Test "Register Here" Button</button>
+            <button class="debug-button" onclick="testModalSwitching()">Test Auto Modal Switching</button>
+            <button class="debug-button" onclick="checkModalElements()">Check Modal Elements</button>
+        </div>
+
+        <div class="debug-section">
+            <h3>Dashboard Tests</h3>
+            <button class="debug-button" onclick="showUserDashboard()">Show User Dashboard</button>
+            <button class="debug-button" onclick="showMainContent()">Show Main Content</button>
+            <button class="debug-button" onclick="hideAllDashboards()">Hide All Dashboards</button>
+        </div>
+
+        <div class="debug-section">
+            <h3>Debug Output</h3>
+            <div id="debug-output"></div>
+        </div>
+    </div>
+
+    <!-- User Dashboard (for testing) -->
+    <div id="user-dashboard" class="dashboard hidden">
+        <div class="dashboard-header">
+            <h2>Welcome, <span id="user-name">Test User</span></h2>
+            <button class="btn btn-secondary" onclick="logout()">Logout</button>
+        </div>
+        <div class="dashboard-content">
+            <h3>User Dashboard is Working!</h3>
+            <p>If you can see this, the dashboard navigation is working correctly.</p>
+        </div>
+    </div>
+
+    <!-- Load Firebase and other scripts -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
+    
+    <script src="js/firebase-config.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/auth.js"></script>
+
+    <script>
+        function logOutput(message) {
+            const output = document.getElementById('debug-output');
+            const timestamp = new Date().toLocaleTimeString();
+            output.textContent += `[${timestamp}] ${message}\n`;
+            output.scrollTop = output.scrollHeight;
+        }
+
+        function testLoginHereButton() {
+            logOutput('Testing "Login Here" button functionality...');
+            
+            // First show register modal
+            logOutput('1. Opening register modal');
+            if (window.showRegisterModal) {
+                window.showRegisterModal();
+            } else {
+                logOutput('Error: showRegisterModal function not available');
+                return;
+            }
+            
+            // Wait a bit then simulate clicking "Login here"
+            setTimeout(() => {
+                logOutput('2. Simulating "Login here" click');
+                if (window.showLoginModal) {
+                    window.showLoginModal();
+                    logOutput('3. Login modal should now be open');
+                    
+                    // Check modal states
+                    setTimeout(() => {
+                        const loginModal = document.getElementById('login-modal');
+                        const registerModal = document.getElementById('register-modal');
+                        
+                        logOutput('Login Modal Display: ' + (loginModal ? loginModal.style.display : 'Element not found'));
+                        logOutput('Register Modal Display: ' + (registerModal ? registerModal.style.display : 'Element not found'));
+                    }, 500);
+                } else {
+                    logOutput('Error: showLoginModal function not available');
+                }
+            }, 1000);
+        }
+
+        function testRegisterHereButton() {
+            logOutput('Testing "Register Here" button functionality...');
+            
+            // First show login modal
+            logOutput('1. Opening login modal');
+            if (window.showLoginModal) {
+                window.showLoginModal();
+            } else {
+                logOutput('Error: showLoginModal function not available');
+                return;
+            }
+            
+            // Wait a bit then simulate clicking "Register here"
+            setTimeout(() => {
+                logOutput('2. Simulating "Register here" click');
+                if (window.showRegisterModal) {
+                    window.showRegisterModal();
+                    logOutput('3. Register modal should now be open');
+                    
+                    // Check modal states
+                    setTimeout(() => {
+                        const loginModal = document.getElementById('login-modal');
+                        const registerModal = document.getElementById('register-modal');
+                        
+                        logOutput('Login Modal Display: ' + (loginModal ? loginModal.style.display : 'Element not found'));
+                        logOutput('Register Modal Display: ' + (registerModal ? registerModal.style.display : 'Element not found'));
+                    }, 500);
+                } else {
+                    logOutput('Error: showRegisterModal function not available');
+                }
+            }, 1000);
+        }
+
+        function testModalSwitching() {
+            if (window.testModalSwitching) {
+                logOutput('Running automatic modal switching test...');
+                window.testModalSwitching();
+            } else {
+                logOutput('testModalSwitching function not available');
+            }
+        }
+
+        function checkModalElements() {
+            if (window.checkModalElements) {
+                logOutput('Checking modal elements...');
+                window.checkModalElements();
+                logOutput('Check complete - see console for details');
+            } else {
+                logOutput('checkModalElements function not available');
+            }
+        }
+
+        function testProfileFormExists() {
+            logOutput('Testing profile form existence...');
+            
+            // Check if user dashboard is loaded
+            if (!window.userDashboard) {
+                logOutput('Error: User dashboard not loaded');
+                return;
+            }
+            
+            // Check profile form elements
+            const profileForm = document.getElementById('profile-form');
+            const nameInput = document.getElementById('profile-name');
+            const phoneInput = document.getElementById('profile-phone');
+            const addressInput = document.getElementById('profile-address');
+            const submitButton = document.querySelector('#profile-form button[type="submit"]');
+            
+            logOutput('Profile Form: ' + (profileForm ? 'Found' : 'Not found'));
+            logOutput('Name Input: ' + (nameInput ? 'Found' : 'Not found'));
+            logOutput('Phone Input: ' + (phoneInput ? 'Found' : 'Not found'));
+            logOutput('Address Input: ' + (addressInput ? 'Found' : 'Not found'));
+            logOutput('Submit Button: ' + (submitButton ? 'Found' : 'Not found'));
+            
+            if (submitButton) {
+                logOutput('Submit Button onclick: ' + (submitButton.getAttribute('onclick') || 'Not set'));
+            }
+        }
+
+        function testProfileUpdate() {
+            logOutput('Testing profile update functionality...');
+            
+            if (!window.userDashboard) {
+                logOutput('Error: User dashboard not loaded');
+                return;
+            }
+            
+            // Fill test data
+            fillTestProfileData();
+            
+            setTimeout(() => {
+                logOutput('Attempting profile update...');
+                
+                // Create a mock event
+                const mockEvent = {
+                    preventDefault: () => logOutput('preventDefault called')
+                };
+                
+                try {
+                    window.userDashboard.handleProfileUpdate(mockEvent);
+                    logOutput('Profile update function called successfully');
+                } catch (error) {
+                    logOutput('Error calling profile update: ' + error.message);
+                }
+            }, 1000);
+        }
+
+        function fillTestProfileData() {
+            logOutput('Filling test profile data...');
+            
+            const nameInput = document.getElementById('profile-name');
+            const phoneInput = document.getElementById('profile-phone');
+            const addressInput = document.getElementById('profile-address');
+            
+            if (nameInput) {
+                nameInput.value = 'Test User Updated';
+                logOutput('Name field filled');
+            }
+            
+            if (phoneInput) {
+                phoneInput.value = '9876543210';
+                logOutput('Phone field filled');
+            }
+            
+            if (addressInput) {
+                addressInput.value = 'Updated Test Address, Updated City, Updated State';
+                logOutput('Address field filled');
+            }
+        }
+
+        function checkEventListeners() {
+            logOutput('Checking event listeners...');
+            
+            const profileForm = document.getElementById('profile-form');
+            
+            if (profileForm) {
+                // Check if form has event listeners
+                const hasSubmitListener = profileForm.onsubmit !== null;
+                const hasDataAttribute = profileForm.hasAttribute('data-listeners-attached');
+                
+                logOutput('Form submit listener: ' + (hasSubmitListener ? 'Found' : 'Not found'));
+                logOutput('Listeners attached attribute: ' + (hasDataAttribute ? 'Yes' : 'No'));
+                
+                // Check global functions
+                logOutput('Global handleProfileUpdate: ' + (typeof window.handleProfileUpdate === 'function' ? 'Available' : 'Not available'));
+                logOutput('UserDashboard instance: ' + (window.userDashboard ? 'Available' : 'Not available'));
+                
+                if (window.userDashboard) {
+                    logOutput('UserDashboard handleProfileUpdate: ' + (typeof window.userDashboard.handleProfileUpdate === 'function' ? 'Available' : 'Not available'));
+                }
+            } else {
+                logOutput('Profile form not found');
+            }
+        }
+
+        function testDashboardRedirection() {
+            logOutput('Testing dashboard redirection functionality...');
+            
+            // Check if authentication functions are available
+            if (!window.authManager) {
+                logOutput('Error: Auth manager not available');
+                return;
+            }
+            
+            logOutput('1. Checking current authentication state');
+            const currentUser = window.authManager.getCurrentUser();
+            logOutput('Current user: ' + (currentUser ? currentUser.email : 'None'));
+            
+            if (currentUser) {
+                logOutput('2. User is authenticated, testing redirection...');
+                logOutput('Redirecting to user dashboard in 2 seconds...');
+                setTimeout(() => {
+                    window.location.href = 'user-dashboard.html';
+                }, 2000);
+            } else {
+                logOutput('2. User not authenticated - please login first');
+            }
+        }
+
+        function testLoginToDashboard() {
+            logOutput('Testing complete login to dashboard flow...');
+            
+            // Pre-fill login form
+            const emailInput = document.getElementById('test-email');
+            const passwordInput = document.getElementById('test-password');
+            const roleSelect = document.getElementById('test-role');
+            
+            if (emailInput) emailInput.value = 'test@example.com';
+            if (passwordInput) passwordInput.value = 'password123';
+            if (roleSelect) roleSelect.value = 'user';
+            
+            logOutput('1. Pre-filled login form with test credentials');
+            logOutput('2. Attempting login...');
+            
+            testLogin().then(() => {
+                logOutput('3. Login attempt completed');
+                logOutput('4. If successful, should redirect to dashboard shortly...');
+            });
+        }
+
+        function openUserDashboard() {
+            logOutput('Opening user dashboard directly...');
+            window.open('user-dashboard.html', '_blank');
+        }
+
+        function testSessionPersistence() {
+            logOutput('Testing session persistence...');
+            
+            if (window.firebaseAuth) {
+                window.firebaseAuth.onAuthStateChanged((user) => {
+                    if (user) {
+                        logOutput('Session active - User: ' + user.email);
+                        logOutput('Session should persist across page navigation');
+                    } else {
+                        logOutput('No active session found');
+                    }
+                });
+            } else {
+                logOutput('Firebase Auth not available');
+            }
+        }
+
+        function openProfileTestPage() {
+            logOutput('Opening dedicated profile test page...');
+            window.open('profile-test.html', '_blank');
+        }
+
+        function forceShowProfile() {
+            logOutput('Forcing profile section to show...');
+            
+            if (window.forceShowProfile) {
+                window.forceShowProfile();
+                logOutput('Profile section forced via global function');
+            } else {
+                // Manual method
+                const profileSection = document.getElementById('profile-section');
+                if (profileSection) {
+                    profileSection.classList.remove('hidden');
+                    logOutput('Profile section shown manually');
+                } else {
+                    logOutput('Profile section not found');
+                }
+            }
+        }
+
+        function clearDebugOutput() {
+            document.getElementById('debug-output').textContent = '';
+        }
+
+        function checkSystemStatus() {
+            logOutput('=== System Status Check ===');
+            logOutput('Firebase Initialized: ' + window.firebaseInitialized);
+            logOutput('Auth Manager Available: ' + (window.authManager ? 'Yes' : 'No'));
+            logOutput('DOM Utilities Available: ' + (window.DOM ? 'Yes' : 'No'));
+            logOutput('Logger Available: ' + (window.logger ? 'Yes' : 'No'));
+            
+            if (window.authManager) {
+                logOutput('Current User: ' + (window.authManager.getCurrentUser() ? 'Logged in' : 'Not logged in'));
+                logOutput('User Role: ' + window.authManager.getUserRole());
+            }
+            
+            // Check if dashboard elements exist
+            const userDashboard = document.getElementById('user-dashboard');
+            logOutput('User Dashboard Element: ' + (userDashboard ? 'Found' : 'Not found'));
+            if (userDashboard) {
+                logOutput('User Dashboard Visible: ' + (!userDashboard.classList.contains('hidden')));
+            }
+        }
+
+        function createTestUser() {
+            if (window.createTestUser) {
+                logOutput('Creating test user...');
+                window.createTestUser().then(() => {
+                    logOutput('Test user creation completed');
+                }).catch(error => {
+                    logOutput('Test user creation failed: ' + error.message);
+                });
+            } else {
+                logOutput('Test user creation function not available');
+            }
+        }
+
+        function debugAuth() {
+            if (window.debugAuth) {
+                window.debugAuth();
+                logOutput('Auth debug info logged to console');
+            } else {
+                logOutput('Debug auth function not available');
+            }
+        }
+
+        async function testLogin() {
+            const email = document.getElementById('test-email').value;
+            const password = document.getElementById('test-password').value;
+            const role = document.getElementById('test-role').value;
+
+            if (!email || !password || !role) {
+                logOutput('Error: Please fill in all fields');
+                return;
+            }
+
+            logOutput(`Attempting login with email: ${email}, role: ${role}`);
+            
+            try {
+                if (!window.authManager) {
+                    logOutput('Error: Auth manager not available');
+                    return;
+                }
+
+                const result = await window.authManager.login(email, password, role);
+                logOutput('Login successful: ' + JSON.stringify(result));
+                
+                // Check dashboard visibility after login
+                setTimeout(() => {
+                    const userDashboard = document.getElementById('user-dashboard');
+                    if (userDashboard) {
+                        logOutput('Dashboard visibility after login: ' + (!userDashboard.classList.contains('hidden')));
+                    }
+                }, 1000);
+                
+            } catch (error) {
+                logOutput('Login failed: ' + error.message);
+            }
+        }
+
+        async function testLogout() {
+            try {
+                if (window.authManager) {
+                    await window.authManager.logout();
+                    logOutput('Logout successful');
+                } else {
+                    logOutput('Auth manager not available');
+                }
+            } catch (error) {
+                logOutput('Logout failed: ' + error.message);
+            }
+        }
+
+        function showUserDashboard() {
+            if (window.DOM) {
+                window.DOM.show('user-dashboard');
+                logOutput('User dashboard shown via DOM utility');
+            } else {
+                const dashboard = document.getElementById('user-dashboard');
+                if (dashboard) {
+                    dashboard.classList.remove('hidden');
+                    logOutput('User dashboard shown manually');
+                } else {
+                    logOutput('User dashboard element not found');
+                }
+            }
+        }
+
+        function showMainContent() {
+            const mainContent = document.getElementById('main-content');
+            if (mainContent) {
+                mainContent.classList.remove('hidden');
+                logOutput('Main content shown');
+            } else {
+                logOutput('Main content element not found');
+            }
+        }
+
+        function hideAllDashboards() {
+            const dashboards = ['user-dashboard', 'staff-dashboard', 'admin-dashboard'];
+            dashboards.forEach(id => {
+                const element = document.getElementById(id);
+                if (element) {
+                    element.classList.add('hidden');
+                    logOutput(`${id} hidden`);
+                }
+            });
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            logOutput('Debug page loaded');
+            checkSystemStatus();
+        });
+    </script>
+</body>
+</html>

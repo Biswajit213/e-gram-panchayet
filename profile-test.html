@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Settings Test - Digital E Gram Panchayat</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .test-container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+        
+        .btn {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        
+        .btn:hover {
+            background: #45a049;
+        }
+        
+        .btn:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+        }
+        
+        .btn-secondary:hover {
+            background: #545b62;
+        }
+        
+        .status {
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .debug-info {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 20px 0;
+            font-family: monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>Profile Settings Button Test</h1>
+        <p>This page tests the profile settings functionality in isolation.</p>
+        
+        <div id="status-message"></div>
+        
+        <!-- Mock Authentication Status -->
+        <div style="background: #e3f2fd; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
+            <h3>Mock User Session</h3>
+            <p><strong>User ID:</strong> <span id="mock-user-id">test-user-123</span></p>
+            <p><strong>Email:</strong> <span id="mock-user-email">test@example.com</span></p>
+            <p><strong>Status:</strong> <span id="auth-status">Checking...</span></p>
+        </div>
+        
+        <!-- Profile Form -->
+        <div id="profile-section" class="dashboard-section">
+            <h2>Profile Settings</h2>
+            <form id="profile-form" class="profile-form">
+                <div class="form-group">
+                    <label for="profile-name">Full Name</label>
+                    <input type="text" id="profile-name" value="Test User" required>
+                </div>
+                <div class="form-group">
+                    <label for="profile-email">Email</label>
+                    <input type="email" id="profile-email" value="test@example.com" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="profile-phone">Phone Number</label>
+                    <input type="tel" id="profile-phone" value="9876543210" required>
+                </div>
+                <div class="form-group">
+                    <label for="profile-address">Address</label>
+                    <textarea id="profile-address" required>Test Address, Test City, Test State</textarea>
+                </div>
+                <button type="submit" class="btn" onclick="window.handleProfileUpdate(event)">Update Profile</button>
+            </form>
+        </div>
+        
+        <!-- Test Controls -->
+        <div style="margin-top: 30px; padding-top: 20px; border-top: 2px solid #eee;">
+            <h3>Test Controls</h3>
+            <button class="btn btn-secondary" onclick="testFormSubmission()">Test Form Submission</button>
+            <button class="btn btn-secondary" onclick="testGlobalFunction()">Test Global Function</button>
+            <button class="btn btn-secondary" onclick="debugProfileSettings()">Debug Profile Settings</button>
+            <button class="btn btn-secondary" onclick="mockFirebaseInit()">Mock Firebase Init</button>
+            <button class="btn btn-secondary" onclick="clearStatus()">Clear Status</button>
+        </div>
+        
+        <!-- Debug Information -->
+        <div id="debug-info" class="debug-info"></div>
+    </div>
+
+    <!-- Load Firebase and scripts -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
+    
+    <script src="js/firebase-config.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/user.js"></script>
+    <script src="js/services.js"></script>
+    <script src="js/applications.js"></script>
+    <script src="js/user-dashboard.js"></script>
+
+    <script>
+        // Status management
+        function showStatus(message, type = 'info') {
+            const statusDiv = document.getElementById('status-message');
+            statusDiv.innerHTML = `<div class="status ${type}">${message}</div>`;
+            
+            // Also log to debug info
+            logDebug(`[${type.toUpperCase()}] ${message}`);
+        }
+        
+        function clearStatus() {
+            document.getElementById('status-message').innerHTML = '';
+            document.getElementById('debug-info').innerHTML = '';
+        }
+        
+        function logDebug(message) {
+            const debugDiv = document.getElementById('debug-info');
+            const timestamp = new Date().toLocaleTimeString();
+            debugDiv.textContent += `[${timestamp}] ${message}\n`;
+            debugDiv.scrollTop = debugDiv.scrollHeight;
+        }
+        
+        // Test functions
+        function testFormSubmission() {
+            logDebug('Testing form submission...');
+            
+            const form = document.getElementById('profile-form');
+            if (form) {
+                logDebug('Form found, triggering submit event...');
+                
+                // Create and dispatch submit event
+                const submitEvent = new Event('submit', {
+                    bubbles: true,
+                    cancelable: true
+                });
+                
+                form.dispatchEvent(submitEvent);
+                logDebug('Submit event dispatched');
+            } else {
+                logDebug('ERROR: Form not found');
+                showStatus('Profile form not found!', 'error');
+            }
+        }
+        
+        function testGlobalFunction() {
+            logDebug('Testing global handleProfileUpdate function...');
+            
+            if (typeof window.handleProfileUpdate === 'function') {
+                logDebug('Global function found, calling...');
+                
+                try {
+                    const mockEvent = {
+                        preventDefault: () => logDebug('preventDefault called')
+                    };
+                    
+                    window.handleProfileUpdate(mockEvent);
+                    logDebug('Global function called successfully');
+                    showStatus('Global function test completed - check debug info', 'success');
+                } catch (error) {
+                    logDebug('ERROR calling global function: ' + error.message);
+                    showStatus('Error calling global function: ' + error.message, 'error');
+                }
+            } else {
+                logDebug('ERROR: Global handleProfileUpdate function not found');
+                showStatus('Global handleProfileUpdate function not found!', 'error');
+            }
+        }
+        
+        function debugProfileSettings() {
+            logDebug('Running profile settings debug...');
+            
+            if (typeof window.debugProfileSettings === 'function') {
+                window.debugProfileSettings();
+                logDebug('Debug function completed - check browser console for details');
+                showStatus('Debug completed - check console and debug info', 'success');
+            } else {
+                logDebug('Debug function not available');
+                
+                // Manual debug
+                logDebug('Manual debug information:');
+                logDebug('- User Dashboard: ' + (window.userDashboard ? 'Available' : 'Not available'));
+                logDebug('- Profile Form: ' + (document.getElementById('profile-form') ? 'Found' : 'Not found'));
+                logDebug('- Firebase Auth: ' + (window.firebaseAuth ? 'Available' : 'Not available'));
+                logDebug('- Firebase DB: ' + (window.firebaseDB ? 'Available' : 'Not available'));
+                logDebug('- Firebase Initialized: ' + window.firebaseInitialized);
+            }
+        }
+        
+        function mockFirebaseInit() {
+            logDebug('Mocking Firebase initialization...');
+            
+            // Mock Firebase objects for testing
+            window.firebaseInitialized = true;
+            
+            // Mock current user
+            window.firebaseAuth = {
+                currentUser: {
+                    uid: 'test-user-123',
+                    email: 'test@example.com',
+                    displayName: 'Test User'
+                }
+            };
+            
+            // Mock Firestore
+            window.firebaseDB = {
+                collection: (name) => ({
+                    doc: (id) => ({
+                        update: (data) => {
+                            logDebug(`Mock update to ${name}/${id}: ${JSON.stringify(data)}`);
+                            return Promise.resolve({
+                                success: true,
+                                message: 'Mock update successful'
+                            });
+                        }
+                    })
+                })
+            };
+            
+            // Mock utils
+            if (!window.DOM) {
+                window.DOM = {
+                    showMessage: (message, type) => {
+                        logDebug(`DOM Message [${type}]: ${message}`);
+                        showStatus(message, type);
+                    }
+                };
+            }
+            
+            document.getElementById('auth-status').textContent = 'Mocked (Ready for testing)';
+            logDebug('Firebase mocking completed');
+            showStatus('Firebase environment mocked successfully', 'success');
+        }
+        
+        // Initialize test environment
+        document.addEventListener('DOMContentLoaded', function() {
+            logDebug('Test page loaded');
+            
+            // Check initial state
+            setTimeout(() => {
+                logDebug('Checking initial state after 2 seconds...');
+                debugProfileSettings();
+                
+                // Update auth status
+                const authStatus = document.getElementById('auth-status');
+                if (window.firebaseInitialized) {
+                    authStatus.textContent = 'Initialized';
+                    authStatus.style.color = 'green';
+                } else {
+                    authStatus.textContent = 'Not initialized - click "Mock Firebase Init" to test';
+                    authStatus.style.color = 'orange';
+                }
+            }, 2000);
+        });
+    </script>
+</body>
+</html>

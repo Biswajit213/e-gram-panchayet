@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Direct Services Test - Digital E Gram Panchayat</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .test-container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .dashboard-section {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        
+        .dashboard-section.hidden {
+            display: none !important;
+        }
+        
+        .dashboard-section:not(.hidden) {
+            display: block;
+        }
+        
+        .btn {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        
+        .btn:hover {
+            background: #45a049;
+        }
+        
+        .log-output {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 20px 0;
+            font-family: monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e9ecef;
+        }
+        
+        .nav-item {
+            display: block;
+            padding: 15px 25px;
+            color: #555;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+            margin-bottom: 5px;
+            background: #f8f9fa;
+        }
+        
+        .nav-item:hover {
+            background: #e9ecef;
+            color: #4CAF50;
+            border-left-color: #4CAF50;
+        }
+        
+        .nav-item.active {
+            background: #e8f5e8;
+            color: #4CAF50;
+            border-left-color: #4CAF50;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>Direct Services Test</h1>
+        <p>This tests the exact same structure as the user dashboard to isolate the services display issue.</p>
+        
+        <!-- Navigation (mimicking the user dashboard) -->
+        <div style="background: #e3f2fd; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
+            <h3>Navigation Test</h3>
+            <nav>
+                <a href="#overview" class="nav-item active" onclick="testShowSection('overview')">
+                    Dashboard Overview
+                </a>
+                <a href="#services" class="nav-item" onclick="testShowSection('services')">
+                    Available Services
+                </a>
+                <a href="#applications" class="nav-item" onclick="testShowSection('applications')">
+                    My Applications
+                </a>
+            </nav>
+        </div>
+        
+        <!-- Test Buttons -->
+        <div style="margin-bottom: 20px;">
+            <button class="btn" onclick="testShowSection('services')">Show Services Section</button>
+            <button class="btn" onclick="testCSSStyles()">Test CSS Styles</button>
+            <button class="btn" onclick="testMultipleApproaches()">Test Multiple Approaches</button>
+            <button class="btn" onclick="clearLog()">Clear Log</button>
+        </div>
+        
+        <!-- Sections (exact structure from user-dashboard.html) -->
+        <div id="overview-section" class="dashboard-section">
+            <h2 class="section-title">Dashboard Overview</h2>
+            <p>This is the overview section.</p>
+        </div>
+
+        <div id="services-section" class="dashboard-section hidden">
+            <h2 class="section-title">Available Services</h2>
+            <p><strong>🎉 SUCCESS!</strong> The Available Services section is now visible!</p>
+            <p>If you can see this message, the services section display functionality is working correctly.</p>
+        </div>
+
+        <div id="applications-section" class="dashboard-section hidden">
+            <h2 class="section-title">My Applications</h2>
+            <p>This is the applications section.</p>
+        </div>
+        
+        <!-- Log Output -->
+        <div id="log-output" class="log-output">Test log will appear here...\n</div>
+    </div>
+
+    <script>
+        function log(message) {
+            const output = document.getElementById('log-output');
+            const timestamp = new Date().toLocaleTimeString();
+            output.textContent += `[${timestamp}] ${message}\n`;
+            output.scrollTop = output.scrollHeight;
+        }
+        
+        function clearLog() {
+            document.getElementById('log-output').textContent = 'Log cleared...\n';
+        }
+        
+        function testShowSection(sectionName) {
+            log(`=== Testing Section Switch to: ${sectionName} ===`);
+            
+            try {
+                // Hide all sections (exact logic from user-dashboard.js)
+                const sections = ['overview', 'services', 'applications'];
+                log('Hiding all sections...');
+                
+                sections.forEach(section => {
+                    const element = document.getElementById(section + '-section');
+                    if (element) {
+                        // Use both approaches for maximum compatibility
+                        element.classList.add('hidden');
+                        element.classList.remove('active');
+                        element.style.display = 'none';
+                        log(`  Hidden section: ${section}`);
+                    } else {
+                        log(`  WARNING: Section not found: ${section}-section`);
+                    }
+                });
+
+                // Show selected section
+                const selectedSection = document.getElementById(sectionName + '-section');
+                log(`Looking for section: ${sectionName}-section`);
+                
+                if (selectedSection) {
+                    // Use both approaches for maximum compatibility
+                    selectedSection.classList.remove('hidden');
+                    selectedSection.classList.add('active');
+                    selectedSection.style.display = 'block';
+                    log(`✅ Successfully showed section: ${sectionName}`);
+                    log(`   Section classes: ${selectedSection.className}`);
+                    log(`   Section display style: ${selectedSection.style.display}`);
+                } else {
+                    log(`❌ ERROR: Section element not found: ${sectionName}-section`);
+                    return;
+                }
+
+                // Update navigation
+                log('Updating navigation...');
+                document.querySelectorAll('.nav-item').forEach(item => {
+                    item.classList.remove('active');
+                });
+                
+                const activeNav = document.querySelector(`[onclick*="testShowSection('${sectionName}')"]`);
+                if (activeNav) {
+                    activeNav.classList.add('active');
+                    log(`✅ Updated navigation for: ${sectionName}`);
+                } else {
+                    log(`⚠️ Navigation item not found for: ${sectionName}`);
+                }
+                
+                log(`=== Section switch completed successfully ===`);
+                
+            } catch (error) {
+                log(`❌ ERROR in testShowSection: ${error.message}`);
+                log(`   Stack: ${error.stack}`);
+            }
+        }
+        
+        function testCSSStyles() {
+            log('=== Testing CSS Styles ===');
+            
+            const servicesSection = document.getElementById('services-section');
+            if (servicesSection) {
+                log('Services section found');
+                log(`  Initial classes: ${servicesSection.className}`);
+                log(`  Initial display: ${getComputedStyle(servicesSection).display}`);
+                
+                // Test removing hidden class
+                servicesSection.classList.remove('hidden');
+                log('  Removed hidden class');
+                log(`  Classes after remove: ${servicesSection.className}`);
+                log(`  Display after remove: ${getComputedStyle(servicesSection).display}`);
+                
+                // Test adding active class
+                servicesSection.classList.add('active');
+                log('  Added active class');
+                log(`  Classes after add: ${servicesSection.className}`);
+                log(`  Display after add: ${getComputedStyle(servicesSection).display}`);
+                
+                // Test direct style
+                servicesSection.style.display = 'block';
+                log('  Set style.display = block');
+                log(`  Final display: ${getComputedStyle(servicesSection).display}`);
+                
+            } else {
+                log('❌ Services section not found');
+            }
+        }
+        
+        function testMultipleApproaches() {
+            log('=== Testing Multiple Approaches ===');
+            
+            const servicesSection = document.getElementById('services-section');
+            if (!servicesSection) {
+                log('❌ Services section not found');
+                return;
+            }
+            
+            // Approach 1: Remove hidden class only
+            log('Approach 1: Remove hidden class only');
+            servicesSection.className = 'dashboard-section';
+            log(`  Display: ${getComputedStyle(servicesSection).display}`);
+            
+            // Reset
+            servicesSection.className = 'dashboard-section hidden';
+            
+            // Approach 2: Add active class only
+            log('Approach 2: Add active class only');
+            servicesSection.classList.add('active');
+            log(`  Display: ${getComputedStyle(servicesSection).display}`);
+            
+            // Reset
+            servicesSection.className = 'dashboard-section hidden';
+            
+            // Approach 3: Set style directly
+            log('Approach 3: Set style.display directly');
+            servicesSection.style.display = 'block';
+            log(`  Display: ${getComputedStyle(servicesSection).display}`);
+            
+            // Reset
+            servicesSection.style.display = '';
+            
+            // Approach 4: Combined approach (what we use)
+            log('Approach 4: Combined approach');
+            servicesSection.classList.remove('hidden');
+            servicesSection.classList.add('active');
+            servicesSection.style.display = 'block';
+            log(`  Final display: ${getComputedStyle(servicesSection).display}`);
+            
+            log('=== Multiple approaches test complete ===');
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            log('Direct Services Test loaded');
+            log('Available sections:');
+            ['overview', 'services', 'applications'].forEach(section => {
+                const el = document.getElementById(section + '-section');
+                log(`  ${section}-section: ${el ? 'Found' : 'Not found'}`);
+            });
+        });
+    </script>
+</body>
+</html>

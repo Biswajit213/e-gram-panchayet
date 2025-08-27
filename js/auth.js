@@ -211,14 +211,37 @@ class AuthManager {
     }
 
     handleAuthSuccess() {
-        // Hide auth buttons
-        window.DOM.hide('auth-buttons');
+        // Check if we're on the main index page
+        const currentPage = window.location.pathname.split('/').pop() || 'index.html';
         
-        // Show appropriate dashboard
-        this.showDashboard();
-        
-        // Update UI
-        this.updateUI();
+        if (currentPage === 'index.html' || currentPage === '') {
+            // Redirect to appropriate dashboard based on role
+            console.log('Auth success - User role:', this.userRole);
+            window.logger.info('User authenticated, redirecting to dashboard', { role: this.userRole });
+            
+            let dashboardPage;
+            switch (this.userRole) {
+                case 'user':
+                    dashboardPage = 'user-dashboard.html';
+                    break;
+                case 'staff':
+                    dashboardPage = 'staff-dashboard.html';
+                    break;
+                case 'admin':
+                    dashboardPage = 'admin-dashboard.html';
+                    break;
+                default:
+                    dashboardPage = 'user-dashboard.html';
+            }
+            
+            // Redirect with a small delay to show any success messages
+            setTimeout(() => {
+                window.location.href = dashboardPage;
+            }, 1000);
+        } else {
+            // If we're already on a dashboard page, just update the UI
+            this.updateUI();
+        }
     }
 
     handleAuthLogout() {
@@ -245,19 +268,45 @@ class AuthManager {
         // Hide main content
         window.DOM.hide('main-content');
         
+        // Hide all dashboards first
+        window.DOM.hide('user-dashboard');
+        window.DOM.hide('staff-dashboard');
+        window.DOM.hide('admin-dashboard');
+        
+        // Close any open modals
+        window.DOM.hideModal('login-modal');
+        window.DOM.hideModal('register-modal');
+        
         // Show appropriate dashboard based on role
+        console.log('Showing dashboard for role:', this.userRole);
+        window.logger.info('Showing dashboard', { role: this.userRole });
+        
         switch (this.userRole) {
             case 'user':
                 window.DOM.show('user-dashboard');
+                console.log('User dashboard shown');
+                // Initialize user dashboard if userManager is available
+                if (window.userManager && window.userManager.initializeUserDashboard) {
+                    window.userManager.initializeUserDashboard();
+                }
                 break;
             case 'staff':
                 window.DOM.show('staff-dashboard');
+                console.log('Staff dashboard shown');
+                if (window.staffManager && window.staffManager.initializeStaffDashboard) {
+                    window.staffManager.initializeStaffDashboard();
+                }
                 break;
             case 'admin':
                 window.DOM.show('admin-dashboard');
+                console.log('Admin dashboard shown');
+                if (window.adminManager && window.adminManager.initializeAdminDashboard) {
+                    window.adminManager.initializeAdminDashboard();
+                }
                 break;
             default:
                 window.DOM.show('user-dashboard');
+                console.log('Default user dashboard shown');
         }
     }
 
@@ -303,15 +352,41 @@ console.log('Auth.js - AuthManager initialized');
 
 // Global authentication functions
 window.showLoginModal = function() {
+    console.log('showLoginModal called');
+    
+    // Close register modal if it's open
+    window.DOM.hideModal('register-modal');
+    
+    // Show login modal
     window.DOM.showModal('login-modal');
     window.logger.info('Login modal opened');
+    
+    // Focus on first input field
+    setTimeout(() => {
+        const emailInput = document.getElementById('login-email');
+        if (emailInput) {
+            emailInput.focus();
+        }
+    }, 100);
 };
 
 window.showRegisterModal = function() {
     console.log('showRegisterModal called');
+    
+    // Close login modal if it's open
+    window.DOM.hideModal('login-modal');
+    
     if (window.DOM && window.DOM.showModal) {
         window.DOM.showModal('register-modal');
         window.logger.info('Register modal opened');
+        
+        // Focus on first input field
+        setTimeout(() => {
+            const nameInput = document.getElementById('register-name');
+            if (nameInput) {
+                nameInput.focus();
+            }
+        }, 100);
     } else {
         // Fallback if DOM utility is not available
         const modal = document.getElementById('register-modal');
@@ -348,35 +423,71 @@ window.logout = function() {
     window.DOM.showMessage('Logged out successfully', 'success');
 };
 
+// Login handler function
+window.handleLogin = async function(event) {
+    if (event) {
+        event.preventDefault();
+    }
+    
+    const email = document.getElementById('login-email').value;
+    const password = document.getElementById('login-password').value;
+    const role = document.getElementById('login-role').value;
+
+    if (!email || !password || !role) {
+        window.DOM.showMessage('Please fill in all fields', 'error');
+        return;
+    }
+
+    const loginForm = document.getElementById('login-form');
+    try {
+        window.DOM.setLoading(loginForm, true);
+        const result = await window.authManager.login(email, password, role);
+        
+        if (result.success) {
+            window.DOM.hideModal('login-modal');
+            window.DOM.showMessage('Login successful! Redirecting to dashboard...', 'success');
+            loginForm.reset();
+            
+            // Redirect to appropriate dashboard based on role
+            setTimeout(() => {
+                switch(result.role) {
+                    case 'user':
+                        window.location.href = 'user-dashboard.html';
+                        break;
+                    case 'staff':
+                        window.location.href = 'staff-dashboard.html';
+                        break;
+                    case 'admin':
+                        window.location.href = 'admin-dashboard.html';
+                        break;
+                    default:
+                        window.location.href = 'user-dashboard.html';
+                }
+            }, 1000);
+        }
+    } catch (error) {
+        window.DOM.showMessage(error.message, 'error');
+        window.logger.error('Login error:', error);
+    } finally {
+        window.DOM.setLoading(loginForm, false);
+    }
+};
+
 // Form event listeners
 document.addEventListener('DOMContentLoaded', function() {
     // Login form
     const loginForm = document.getElementById('login-form');
     if (loginForm) {
-        loginForm.addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            const email = document.getElementById('login-email').value;
-            const password = document.getElementById('login-password').value;
-            const role = document.getElementById('login-role').value;
-
-            if (!email || !password || !role) {
-                window.DOM.showMessage('Please fill in all fields', 'error');
-                return;
-            }
-
-            try {
-                window.DOM.setLoading(loginForm, true);
-                await window.authManager.login(email, password, role);
-                window.DOM.hideModal('login-modal');
-                window.DOM.showMessage('Login successful!', 'success');
-                loginForm.reset();
-            } catch (error) {
-                window.DOM.showMessage(error.message, 'error');
-            } finally {
-                window.DOM.setLoading(loginForm, false);
-            }
-        });
+        loginForm.addEventListener('submit', window.handleLogin);
+        
+        // Also add click handler to submit button as backup
+        const submitButton = loginForm.querySelector('button[type="submit"]');
+        if (submitButton) {
+            submitButton.addEventListener('click', function(e) {
+                e.preventDefault();
+                window.handleLogin(e);
+            });
+        }
     }
 
     // Register form
@@ -473,6 +584,90 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
+
+// Modal testing functions
+window.testModalSwitching = function() {
+    console.log('=== Testing Modal Switching ===');
+    
+    // Test showing login modal
+    console.log('1. Testing showLoginModal()');
+    window.showLoginModal();
+    
+    setTimeout(() => {
+        console.log('2. Testing showRegisterModal()');
+        window.showRegisterModal();
+        
+        setTimeout(() => {
+            console.log('3. Testing showLoginModal() again');
+            window.showLoginModal();
+            
+            setTimeout(() => {
+                console.log('4. Closing all modals');
+                window.closeModal('login-modal');
+                window.closeModal('register-modal');
+                console.log('Modal switching test completed');
+            }, 2000);
+        }, 2000);
+    }, 2000);
+};
+
+window.checkModalElements = function() {
+    console.log('=== Checking Modal Elements ===');
+    const loginModal = document.getElementById('login-modal');
+    const registerModal = document.getElementById('register-modal');
+    
+    console.log('Login Modal Element:', loginModal ? 'Found' : 'Not found');
+    console.log('Register Modal Element:', registerModal ? 'Found' : 'Not found');
+    
+    if (loginModal) {
+        console.log('Login Modal Display:', loginModal.style.display);
+        console.log('Login Modal Classes:', loginModal.className);
+    }
+    
+    if (registerModal) {
+        console.log('Register Modal Display:', registerModal.style.display);
+        console.log('Register Modal Classes:', registerModal.className);
+    }
+    
+    // Check for login here links
+    const loginLinks = document.querySelectorAll('a[onclick*="showLoginModal"]');
+    console.log('Login Here Links Found:', loginLinks.length);
+    loginLinks.forEach((link, index) => {
+        console.log(`Link ${index + 1}:`, link.outerHTML);
+    });
+};
+
+// Test user creation for debugging
+window.createTestUser = async function() {
+    try {
+        const testUserData = {
+            name: 'Test User',
+            email: 'test@example.com',
+            phone: '9876543210',
+            address: 'Test Address, Test City',
+            password: 'password123',
+            confirmPassword: 'password123'
+        };
+        
+        await window.authManager.register(testUserData);
+        console.log('Test user created successfully');
+        window.DOM.showMessage('Test user created: test@example.com / password123', 'success', 10000);
+    } catch (error) {
+        console.error('Failed to create test user:', error);
+        window.DOM.showMessage('Failed to create test user: ' + error.message, 'error');
+    }
+};
+
+// Add debugging info
+window.debugAuth = function() {
+    console.log('=== Authentication Debug Info ===');
+    console.log('Current User:', window.authManager.getCurrentUser());
+    console.log('User Role:', window.authManager.getUserRole());
+    console.log('Is Authenticated:', window.authManager.isAuthenticated());
+    console.log('Firebase Initialized:', window.firebaseInitialized);
+    console.log('Auth Manager:', window.authManager);
+    console.log('================================');
+};
 
 // Log authentication module initialization
 window.logger.info('Authentication module initialized'); 

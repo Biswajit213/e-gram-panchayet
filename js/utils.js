@@ -81,6 +81,8 @@ const DOM = {
         }
         if (element) {
             element.classList.remove('hidden');
+            element.style.display = '';
+            console.log('Showing element:', element.id || element.className);
         }
     },
 
@@ -91,6 +93,7 @@ const DOM = {
         }
         if (element) {
             element.classList.add('hidden');
+            console.log('Hiding element:', element.id || element.className);
         }
     },
 
@@ -122,24 +125,44 @@ const DOM = {
 
     // Show modal
     showModal(modalId) {
+        console.log('Showing modal:', modalId);
         const modal = document.getElementById(modalId);
         if (modal) {
+            // Hide all other modals first
+            const allModals = document.querySelectorAll('.modal');
+            allModals.forEach(m => {
+                if (m.id !== modalId) {
+                    m.style.display = 'none';
+                }
+            });
+            
             modal.style.display = 'block';
             document.body.style.overflow = 'hidden';
+            
             // Focus first input
-            const firstInput = modal.querySelector('input, textarea, select');
-            if (firstInput) {
-                firstInput.focus();
-            }
+            setTimeout(() => {
+                const firstInput = modal.querySelector('input, textarea, select');
+                if (firstInput) {
+                    firstInput.focus();
+                }
+            }, 100);
+            
+            console.log('Modal shown successfully:', modalId);
+        } else {
+            console.error('Modal not found:', modalId);
         }
     },
 
     // Hide modal
     hideModal(modalId) {
+        console.log('Hiding modal:', modalId);
         const modal = document.getElementById(modalId);
         if (modal) {
             modal.style.display = 'none';
             document.body.style.overflow = 'auto';
+            console.log('Modal hidden successfully:', modalId);
+        } else {
+            console.error('Modal not found:', modalId);
         }
     },
 

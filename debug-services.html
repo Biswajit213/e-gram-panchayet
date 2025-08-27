@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Services Section Debug - Digital E Gram Panchayat</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .debug-container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .btn {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+        }
+        
+        .btn:hover {
+            background: #45a049;
+        }
+        
+        .btn-danger {
+            background: #dc3545;
+        }
+        
+        .btn-danger:hover {
+            background: #c82333;
+        }
+        
+        .debug-output {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 20px 0;
+            font-family: monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .status-good {
+            color: #28a745;
+            font-weight: bold;
+        }
+        
+        .status-bad {
+            color: #dc3545;
+            font-weight: bold;
+        }
+        
+        .status-warn {
+            color: #ffc107;
+            font-weight: bold;
+        }
+        
+        .test-section {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        h3 {
+            color: #333;
+            border-bottom: 2px solid #4CAF50;
+            padding-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="debug-container">
+        <h1>🔍 Available Services Debug Tool</h1>
+        <p>This tool helps diagnose why the Available Services section is not showing on the user dashboard.</p>
+        
+        <div class="test-section">
+            <h3>Quick Tests</h3>
+            <button class="btn" onclick="runFullDiagnostic()">🔧 Run Full Diagnostic</button>
+            <button class="btn" onclick="testShowServices()">📋 Test Show Services</button>
+            <button class="btn" onclick="testGlobalFunction()">🌐 Test Global Function</button>
+            <button class="btn" onclick="testFallback()">🔄 Test Fallback</button>
+            <button class="btn btn-danger" onclick="clearOutput()">🗑️ Clear Output</button>
+        </div>
+        
+        <div class="test-section">
+            <h3>Manual Actions</h3>
+            <button class="btn" onclick="forceShowServices()">🚀 Force Show Services</button>
+            <button class="btn" onclick="loadServicesManually()">📥 Load Services Manually</button>
+            <button class="btn" onclick="inspectDOM()">🔍 Inspect DOM Elements</button>
+        </div>
+        
+        <div id="debug-output" class="debug-output">
+            Diagnostic output will appear here...\n
+        </div>
+    </div>
+
+    <!-- Include the main scripts -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
+    
+    <script src="js/firebase-config.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/user.js"></script>
+    <script src="js/services.js"></script>
+    <script src="js/applications.js"></script>
+    <script src="js/user-dashboard.js"></script>
+
+    <script>
+        // Debug output management
+        function logOutput(message, type = 'info') {
+            const output = document.getElementById('debug-output');
+            const timestamp = new Date().toLocaleTimeString();
+            let className = '';
+            let prefix = '';
+            
+            switch(type) {
+                case 'success':
+                    className = 'status-good';
+                    prefix = '✅ ';
+                    break;
+                case 'error':
+                    className = 'status-bad';
+                    prefix = '❌ ';
+                    break;
+                case 'warn':
+                    className = 'status-warn';
+                    prefix = '⚠️ ';
+                    break;
+                default:
+                    prefix = 'ℹ️ ';
+            }
+            
+            const span = document.createElement('span');
+            span.className = className;
+            span.textContent = `[${timestamp}] ${prefix}${message}\n`;
+            output.appendChild(span);
+            output.scrollTop = output.scrollHeight;
+        }
+        
+        function clearOutput() {
+            document.getElementById('debug-output').innerHTML = 'Output cleared...\n';
+        }
+        
+        // Diagnostic functions
+        function runFullDiagnostic() {
+            logOutput('🔧 Starting Full Diagnostic...', 'info');
+            
+            // Check basic requirements
+            logOutput('1. Checking Basic Requirements:', 'info');
+            logOutput(`   - Firebase: ${typeof firebase !== 'undefined' ? 'Available' : 'Missing'}`, typeof firebase !== 'undefined' ? 'success' : 'error');
+            logOutput(`   - Firebase Config: ${window.firebaseInitialized ? 'Initialized' : 'Not Initialized'}`, window.firebaseInitialized ? 'success' : 'error');
+            logOutput(`   - User Dashboard: ${window.userDashboard ? 'Available' : 'Missing'}`, window.userDashboard ? 'success' : 'error');
+            
+            // Check global functions
+            logOutput('2. Checking Global Functions:', 'info');
+            logOutput(`   - showSection: ${typeof window.showSection === 'function' ? 'Available' : 'Missing'}`, typeof window.showSection === 'function' ? 'success' : 'error');
+            logOutput(`   - debugServicesNavigation: ${typeof window.debugServicesNavigation === 'function' ? 'Available' : 'Missing'}`, typeof window.debugServicesNavigation === 'function' ? 'success' : 'error');
+            logOutput(`   - forceShowServices: ${typeof window.forceShowServices === 'function' ? 'Available' : 'Missing'}`, typeof window.forceShowServices === 'function' ? 'success' : 'error');
+            
+            // Check DOM elements in the current page
+            logOutput('3. Checking DOM Elements (may not exist on this debug page):', 'info');
+            const servicesSection = document.getElementById('services-section');
+            const servicesGrid = document.getElementById('services-grid');
+            const navItem = document.querySelector('[onclick*="showSection(\'services\')"]');
+            
+            logOutput(`   - services-section: ${servicesSection ? 'Found' : 'Not Found'}`, servicesSection ? 'success' : 'warn');
+            logOutput(`   - services-grid: ${servicesGrid ? 'Found' : 'Not Found'}`, servicesGrid ? 'success' : 'warn');
+            logOutput(`   - Navigation item: ${navItem ? 'Found' : 'Not Found'}`, navItem ? 'success' : 'warn');
+            
+            if (servicesSection) {
+                logOutput(`   - services-section classes: ${servicesSection.className}`, 'info');
+                logOutput(`   - services-section hidden: ${servicesSection.classList.contains('hidden')}`, servicesSection.classList.contains('hidden') ? 'warn' : 'success');
+            }
+            
+            // Check if we're on the actual dashboard page
+            logOutput('4. Page Analysis:', 'info');
+            const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+            logOutput(`   - Current page: ${currentPage}`, 'info');
+            logOutput(`   - Is dashboard page: ${currentPage.includes('dashboard') ? 'Yes' : 'No'}`, currentPage.includes('dashboard') ? 'success' : 'warn');
+            
+            if (!currentPage.includes('dashboard')) {
+                logOutput('   ⚠️ To test actual functionality, please navigate to user-dashboard.html', 'warn');
+            }
+            
+            logOutput('🔧 Full Diagnostic Complete!', 'success');
+        }
+        
+        function testShowServices() {
+            logOutput('📋 Testing Show Services Function...', 'info');
+            
+            if (typeof window.showSection === 'function') {
+                try {
+                    logOutput('   Calling window.showSection("services")...', 'info');
+                    window.showSection('services');
+                    logOutput('   Function called successfully', 'success');
+                    
+                    // Check result after a delay
+                    setTimeout(() => {
+                        const servicesSection = document.getElementById('services-section');
+                        if (servicesSection) {
+                            const isVisible = !servicesSection.classList.contains('hidden');
+                            logOutput(`   Services section visible: ${isVisible}`, isVisible ? 'success' : 'error');
+                        } else {
+                            logOutput('   Services section not found (normal if not on dashboard page)', 'warn');
+                        }
+                    }, 1000);
+                    
+                } catch (error) {
+                    logOutput(`   Error calling showSection: ${error.message}`, 'error');
+                }
+            } else {
+                logOutput('   showSection function not available', 'error');
+            }
+        }
+        
+        function testGlobalFunction() {
+            logOutput('🌐 Testing Global Function Availability...', 'info');
+            
+            const functions = [
+                'showSection',
+                'debugServicesNavigation', 
+                'forceShowServices',
+                'applyForService',
+                'applyForServiceFallback'
+            ];
+            
+            functions.forEach(funcName => {
+                const available = typeof window[funcName] === 'function';
+                logOutput(`   ${funcName}: ${available ? 'Available' : 'Missing'}`, available ? 'success' : 'error');
+            });
+            
+            if (window.userDashboard) {
+                logOutput('   Dashboard instance methods:', 'info');
+                const methods = Object.getOwnPropertyNames(Object.getPrototypeOf(window.userDashboard));
+                methods.forEach(method => {
+                    if (typeof window.userDashboard[method] === 'function') {
+                        logOutput(`     ${method}: Available`, 'success');
+                    }
+                });
+            }
+        }
+        
+        function testFallback() {
+            logOutput('🔄 Testing Fallback Functionality...', 'info');
+            
+            if (typeof window.showSectionFallback === 'function') {
+                logOutput('   showSectionFallback function available', 'success');
+                try {
+                    logOutput('   Calling showSectionFallback("services")...', 'info');
+                    window.showSectionFallback('services');
+                } catch (error) {
+                    logOutput(`   Error in fallback: ${error.message}`, 'error');
+                }
+            } else {
+                logOutput('   showSectionFallback function not available', 'error');
+            }
+        }
+        
+        function forceShowServices() {
+            logOutput('🚀 Force Showing Services...', 'info');
+            
+            if (typeof window.forceShowServices === 'function') {
+                window.forceShowServices();
+                logOutput('   forceShowServices called', 'success');
+            } else {
+                logOutput('   forceShowServices not available, trying manual approach...', 'warn');
+                
+                // Manual approach
+                const servicesSection = document.getElementById('services-section');
+                if (servicesSection) {
+                    servicesSection.classList.remove('hidden');
+                    logOutput('   Manually removed hidden class from services section', 'success');
+                } else {
+                    logOutput('   services-section element not found', 'error');
+                }
+            }
+        }
+        
+        function loadServicesManually() {
+            logOutput('📥 Loading Services Manually...', 'info');
+            
+            if (window.userDashboard && typeof window.userDashboard.loadAvailableServices === 'function') {
+                try {
+                    window.userDashboard.loadAvailableServices();
+                    logOutput('   loadAvailableServices called successfully', 'success');
+                } catch (error) {
+                    logOutput(`   Error calling loadAvailableServices: ${error.message}`, 'error');
+                }
+            } else if (typeof window.loadAvailableServicesFallback === 'function') {
+                try {
+                    window.loadAvailableServicesFallback();
+                    logOutput('   loadAvailableServicesFallback called successfully', 'success');
+                } catch (error) {
+                    logOutput(`   Error calling loadAvailableServicesFallback: ${error.message}`, 'error');
+                }
+            } else {
+                logOutput('   No service loading functions available', 'error');
+            }
+        }
+        
+        function inspectDOM() {
+            logOutput('🔍 Inspecting DOM Elements...', 'info');
+            
+            // Check for all dashboard sections
+            const sections = ['overview', 'services', 'applications', 'profile', 'support'];
+            
+            logOutput('   Dashboard sections:', 'info');
+            sections.forEach(section => {
+                const element = document.getElementById(section + '-section');
+                if (element) {
+                    logOutput(`     ${section}-section: Found (classes: ${element.className})`, 'success');
+                } else {
+                    logOutput(`     ${section}-section: Not found`, 'warn');
+                }
+            });
+            
+            // Check navigation items
+            logOutput('   Navigation items:', 'info');
+            const navItems = document.querySelectorAll('[onclick*="showSection"]');
+            if (navItems.length > 0) {
+                navItems.forEach((item, index) => {
+                    const onclick = item.getAttribute('onclick');
+                    logOutput(`     Nav item ${index + 1}: ${onclick}`, 'success');
+                });
+            } else {
+                logOutput('     No navigation items found with showSection onclick', 'warn');
+            }
+            
+            // Check page title and URL for context
+            logOutput(`   Page title: ${document.title}`, 'info');
+            logOutput(`   Current URL: ${window.location.href}`, 'info');
+        }
+        
+        // Initialize debug environment
+        document.addEventListener('DOMContentLoaded', function() {
+            logOutput('🚀 Debug Tool Initialized', 'success');
+            logOutput('Click "Run Full Diagnostic" to start troubleshooting', 'info');
+            logOutput('', 'info'); // Empty line for readability
+            
+            // Mock Firebase for testing
+            if (!window.firebaseInitialized) {
+                window.firebaseInitialized = true;
+                logOutput('📝 Mocked Firebase initialization for testing', 'warn');
+            }
+            
+            // Check if this is being loaded on the actual dashboard page
+            setTimeout(() => {
+                const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+                if (currentPage.includes('dashboard')) {
+                    logOutput('✅ Detected dashboard page - full testing available', 'success');
+                } else {
+                    logOutput('⚠️ Not on dashboard page - limited testing available', 'warn');
+                    logOutput('💡 Navigate to user-dashboard.html for full functionality testing', 'info');
+                }
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

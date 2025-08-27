@@ -201,21 +201,49 @@ class DigitalGramPanchayatApp {
     }
 
     async handleAuthenticatedState() {
-        // Hide auth buttons
-        window.DOM.hide('auth-buttons');
-
-        // Show appropriate dashboard
-        this.showDashboard();
-
-        // Initialize dashboard based on role
-        this.initializeDashboard();
-
-        // Update UI
-        await this.updateUI();
+        // Check what page we're on
+        const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+        
+        if (currentPage === 'index.html' || currentPage === '') {
+            // On main page - hide auth buttons and redirect to dashboard
+            window.DOM.hide('auth-buttons');
+            
+            // Redirect to appropriate dashboard
+            let dashboardPage;
+            switch (this.userRole) {
+                case 'user':
+                    dashboardPage = 'user-dashboard.html';
+                    break;
+                case 'staff':
+                    dashboardPage = 'staff-dashboard.html';
+                    break;
+                case 'admin':
+                    dashboardPage = 'admin-dashboard.html';
+                    break;
+                default:
+                    dashboardPage = 'user-dashboard.html';
+            }
+            
+            setTimeout(() => {
+                window.location.href = dashboardPage;
+            }, 500);
+        } else {
+            // On dashboard page - just update UI
+            await this.updateUI();
+        }
     }
 
     handleUnauthenticatedState() {
-        // Show auth buttons
+        // Check what page we're on
+        const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+        
+        if (currentPage.includes('dashboard.html')) {
+            // On dashboard page but not authenticated - redirect to main page
+            window.location.href = 'index.html';
+            return;
+        }
+        
+        // On main page - show auth buttons and main content
         window.DOM.show('auth-buttons');
         
         // Hide all dashboards

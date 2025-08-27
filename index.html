@@ -298,10 +298,10 @@
                         <option value="admin">Admin</option>
                     </select>
                 </div>
-                <button type="submit" class="btn btn-primary btn-full">Login</button>
+                <button type="submit" class="btn btn-primary btn-full" onclick="window.handleLogin(event)">Login</button>
             </form>
             <div class="modal-footer">
-                <p>Don't have an account? <a href="#" onclick="showRegisterModal(); console.log('Login modal register link clicked');">Register here</a></p>
+                <p>Don't have an account? <a href="#" onclick="window.showRegisterModal(); closeModal('login-modal'); return false;">Register here</a></p>
             </div>
         </div>
     </div>
@@ -341,7 +341,7 @@
                 <button type="submit" class="btn btn-primary btn-full" style="visibility: visible !important; display: inline-flex !important; opacity: 1 !important;" onclick="handleRegistration(event)">Register</button>
             </form>
             <div class="modal-footer">
-                <p>Already have an account? <a href="#" onclick="showLoginModal()">Login here</a></p>
+                <p>Already have an account? <a href="#" onclick="window.showLoginModal(); closeModal('register-modal'); return false;">Login here</a></p>
             </div>
         </div>
     </div>

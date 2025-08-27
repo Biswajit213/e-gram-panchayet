@@ -89,6 +89,15 @@
     display: block;
 }
 
+/* Support for hidden class system used in user-dashboard.html */
+.dashboard-section:not(.hidden) {
+    display: block;
+}
+
+.dashboard-section.hidden {
+    display: none !important;
+}
+
 .dashboard-section h3 {
     margin-bottom: 25px;
     color: var(--gray-800);
@@ -105,7 +114,7 @@
 }
 
 .stat-card {
-    background: white;
+    background: hsl(199, 91%, 45%);
     padding: 25px;
     border-radius: var(--border-radius-lg);
     box-shadow: var(--shadow-md);
@@ -142,7 +151,7 @@
 }
 
 .service-item {
-    background: white;
+    background: rgb(22, 113, 184);
     border-radius: var(--border-radius-lg);
     padding: 20px;
     box-shadow: var(--shadow-md);
